@@ -1,0 +1,26 @@
+const express = require("express");
+const crypto = require("crypto");
+
+const app = express();
+
+const APP_SECRET = process.env.CPX_SECRET || "YOUR_CPX_SECRET";
+
+app.get("/api/cpx-hash", (req, res) => {
+  const userId = req.query.userId;
+
+  if (!userId) {
+    return res.status(400).json({ error: "Missing userId" });
+  }
+
+  const secureHash = crypto
+    .createHmac("sha1", APP_SECRET)
+    .update(userId)
+    .digest("hex");
+
+  res.json({ secureHash });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
