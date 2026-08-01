@@ -42,7 +42,7 @@ function completeTask(id) {
   saveCurrentUser(user);
   renderTasks();
   renderStats();
-  alert("Demo reward added: $" + task.reward.toFixed(2));
+  window.location.href = "/survey.html";
 }
 function renderStats() {
   const user = currentUser();
