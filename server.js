@@ -1,10 +1,17 @@
 const express = require("express");
 const crypto = require("crypto");
+const path = require("path");
 
 const app = express();
 
 const APP_SECRET = process.env.CPX_SECRET || "YOUR_CPX_SECRET";
 
+// Health check
+app.get("/health", (req, res) => {
+  res.json({ status: "ok" });
+});
+
+// CPX hash API
 app.get("/api/cpx-hash", (req, res) => {
   const userId = req.query.userId;
 
@@ -18,12 +25,15 @@ app.get("/api/cpx-hash", (req, res) => {
     .digest("hex");
 
   res.json({ secureHash });
-  app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/index.html");
 });
+
+// Home page
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 
 const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
