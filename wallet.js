@@ -33,7 +33,7 @@ function requestWithdrawal(){
   const message = document.getElementById("withdraw-message");
   if (!amount || amount <= 0) return message.textContent = "Enter a valid withdrawal amount.";
   if (amount > Number(user.balance || 0)) return message.textContent = "Insufficient available balance.";
-  if (amount < 10) return message.textContent = "Minimum demo withdrawal is $10.00.";
+  if (amount < 10000) return message.textContent = "Minimum withdrawal is ₦10,000.";
   user.withdrawals = user.withdrawals || [];
   user.withdrawals.unshift({id:Date.now().toString(), amount, method, status:"Pending", date:new Date().toISOString()});
   user.transactions = user.transactions || [];
