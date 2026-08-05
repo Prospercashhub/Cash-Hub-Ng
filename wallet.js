@@ -28,6 +28,9 @@ function renderWallet() {
 }
 function requestWithdrawal(){
   const user = walletUser();
+  if (!user.activeReferrals) {
+  user.activeReferrals = 0;
+}
   const amount = Number(document.getElementById("withdraw-amount").value);
   const method = document.getElementById("withdraw-method").value;
   const referrals = Number(user.activeReferrals || 0);
