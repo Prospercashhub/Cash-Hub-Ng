@@ -34,6 +34,18 @@ app.get("/", (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 
+app.get("/api/cpx-callback", async (req, res) => {
+  try {
+    console.log("CPX Callback:", req.query);
+
+    // We'll add the real processing in the next step.
+    res.status(200).send("OK");
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("ERROR");
+  }
+});
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
