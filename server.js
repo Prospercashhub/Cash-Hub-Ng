@@ -37,6 +37,19 @@ const PORT = process.env.PORT || 3000;
 app.get("/api/cpx-callback", async (req, res) => {
   try {
     console.log("CPX Callback:", req.query);
+    const {
+  user_id,
+  trans_id,
+  reward_value,
+  status
+} = req.query;
+
+console.log({
+  user_id,
+  trans_id,
+  reward_value,
+  status
+});
 
     // We'll add the real processing in the next step.
     res.status(200).send("OK");
