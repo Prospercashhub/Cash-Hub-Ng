@@ -3,6 +3,8 @@ const crypto = require("crypto");
 const path = require("path");
 const supabase = require("./supabase");
 
+const app = express();
+
 app.use(express.json());
 
 const APP_SECRET = process.env.CPX_SECRET || "YOUR_CPX_SECRET";
