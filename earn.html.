@@ -70,7 +70,7 @@ async function openOfferwall() {
   }
 
   const response = await fetch(
-    "https://cash-hub-ng.onrender.com/api/cpx-hash?userId=" +
+    "https://cash-hub-ng2.onrender.com/api/cpx-hash?userId=" +
     encodeURIComponent(session.id)
   );
 
