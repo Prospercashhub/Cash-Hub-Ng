@@ -11,7 +11,12 @@ function saveWalletUser(user) {
   if (i >= 0) users[i] = user;
   localStorage.setItem("cashHubNgUsers", JSON.stringify(users));
 }
-function money(n){ return "$" + Number(n || 0).toFixed(2); }
+function money(n){
+  return "₦" + Number(n || 0).toLocaleString("en-NG", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
 function renderWallet() {
   const user = walletUser();
   if (!user) { window.location.href = "login.html"; return; }
