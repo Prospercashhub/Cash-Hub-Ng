@@ -54,8 +54,65 @@ console.log({
   status
 });
 
-    // We'll add the real processing in the next step.
-    res.status(200).send("OK");
+    const reward = Number(reward_value || 0);
+
+if (!user_id || !trans_id || reward <= 0) {
+  return res.status(400).send("Invalid callback");
+}
+
+// Prevent duplicate rewards
+const { data: existing } = await supabase
+  .from("transactions")
+  .select("id")
+  .eq("trans_id", trans_id)
+  .maybeSingle();
+
+if (existing) {
+  return res.status(200).send("Already Processed");
+}
+
+// Find the user
+const { data: user, error: userError } = await supabase
+  .from("users")
+  .select("*")
+  .eq("id", user_id)
+  .single();
+
+if (userError || !user) {
+  console.error(userError);
+  return res.status(404).send("User not found");
+}
+
+// Update balance and earnings
+const { error: updateError } = await supabase
+  .from("users")
+  .update({
+    balance: Number(user.balance) + reward,
+    earnings: Number(user.earnings) + reward
+  })
+  .eq("id", user_id);
+
+if (updateError) {
+  console.error(updateError);
+  return res.status(500).send("Failed to update user");
+}
+
+// Save transaction
+const { error: txError } = await supabase
+  .from("transactions")
+  .insert({
+    trans_id: trans_id,
+    user_id: user_id,
+    title: "CPX Survey Reward",
+    type: "survey",
+    amount: reward
+  });
+
+if (txError) {
+  console.error(txError);
+}
+
+return res.status(200).send("OK");
 
   } catch (err) {
     console.error(err);
