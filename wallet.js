@@ -30,7 +30,13 @@ function requestWithdrawal(){
   const user = walletUser();
   const amount = Number(document.getElementById("withdraw-amount").value);
   const method = document.getElementById("withdraw-method").value;
-  const message = document.getElementById("withdraw-message");
+  const referrals = Number(user.activeReferrals || 0);
+
+if (referrals < 5) {
+  message.textContent =
+    "You need 5 active referrals before you can withdraw.";
+  return;
+}
   if (!amount || amount <= 0) return message.textContent = "Enter a valid withdrawal amount.";
   if (amount > Number(user.balance || 0)) return message.textContent = "Insufficient available balance.";
   if (amount < 10000) return message.textContent = "Minimum withdrawal is ₦10,000.";
