@@ -43,10 +43,11 @@
   <section class="lower-grid">
     <div class="panel">
       <div class="section-title"><h2>Recent transactions</h2><a href="wallet.html">View all →</a></div>
-      <div class="empty-state"><span>📋</span><h3>No transactions yet</h3><p>Your earning and wallet activity will appear here.</p></div>
+      <div id="recent-transactions" class="transactions-placeholder"><div class="empty-state"><span>📋</span><h3>Loading…</h3><p>Fetching recent activity.</p></div></div>
     </div>
     <div id="referrals" class="panel referral-panel">
       <p class="eyebrow">REFERRAL PROGRAM</p><h2>Earn with your friends.</h2><p>Invite friends using your referral link and participate in the referral program when eligible.</p><a class="primary-btn" href="referrals.html">Open Referral Center →</a><div id="copy-status"></div>
+      <div style="margin-top:12px"><strong>Active referrals: <span id="dashboard-ref-count">0</span></strong></div>
     </div>
   </section>
 </main>
@@ -60,9 +61,12 @@
 <script>
 function copyReferral(){
   const link='https://cashhubng.example/ref/CH0001';
-  if(navigator.clipboard){navigator.clipboard.writeText(link);}
-  document.getElementById('copy-status').textContent='Referral link copied!';
+  if(navigator.clipboard){navigator.clipboard.writeText(link);} 
+  const el = document.getElementById('copy-status');
+  if(el) el.textContent='Referral link copied!';
 }
 </script>
-<script src="auth.js"></script><script>protectDashboard();</script></body>
+<script src="auth.js"></script><script>protectDashboard();</script>
+<script src="dashboard.js"></script>
+</body>
 </html>
