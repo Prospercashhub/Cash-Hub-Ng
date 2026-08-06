@@ -14,38 +14,102 @@ function getSession() {
 function setSession(user) { localStorage.setItem(SESSION_KEY, JSON.stringify(user)); }
 function logout() { localStorage.removeItem(SESSION_KEY); window.location.href = "index.html"; }
 
-function setupSignup() {
+async function setupSignup() {
   const form = document.getElementById("signup-form");
   const message = document.getElementById("auth-message");
   if (!form) return;
-  form.addEventListener("submit", e => {
+
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const name = document.getElementById("full-name").value.trim();
+
+    const full_name = document.getElementById("full-name").value.trim();
     const email = document.getElementById("email").value.trim().toLowerCase();
     const password = document.getElementById("password").value;
     const confirm = document.getElementById("confirm-password").value;
-    if (password !== confirm) return message.textContent = "Passwords do not match.";
-    const users = getUsers();
-    if (users.some(u => u.email === email)) return message.textContent = "An account with this email already exists.";
-    const user = { id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()), name, email, password, balance: 0, earnings: 0, referralEarnings: 0, createdAt: new Date().toISOString() };
-    users.push(user); saveUsers(users); if(typeof attachReferralToNewUser==="function") attachReferralToNewUser(user); setSession({id:user.id,name:user.name,email:user.email});
-    window.location.href = "dashboard.html";
-  });
-}
 
-function setupLogin() {
+    if (password !== confirm) {
+      message.textContent = "Passwords do not match.";
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          full_name,
+          email,
+          password
+        })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        message.textContent = data.error;
+        return;
+      }
+
+      setSession({
+        id: data.user.id,
+        name: data.user.full_name,
+        email: data.user.email
+      });
+
+      window.location.href = "dashboard.html";
+
+    } catch (err) {
+      message.textContent = "Unable to connect to server.";
+    }
+  });
+      }
+
+async function setupLogin() {
   const form = document.getElementById("login-form");
   const message = document.getElementById("auth-message");
+
   if (!form) return;
-  form.addEventListener("submit", e => {
+
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
+
     const email = document.getElementById("email").value.trim().toLowerCase();
     const password = document.getElementById("password").value;
-    const user = getUsers().find(u => u.email === email && u.password === password);
-    if (!user) return message.textContent = "Invalid email or password.";
-    setSession({id:user.id,name:user.name,email:user.email});
-    window.location.href = "dashboard.html";
+
+    try {
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email,
+          password
+        })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        message.textContent = data.error;
+        return;
+      }
+
+      setSession({
+        id: data.user.id,
+        name: data.user.full_name,
+        email: data.user.email
+      });
+
+      window.location.href = "dashboard.html";
+
+    } catch (err) {
+      message.textContent = "Unable to connect to server.";
+    }
   });
+    }
 }
 
 function protectDashboard() {
