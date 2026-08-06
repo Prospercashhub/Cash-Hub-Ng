@@ -1,6 +1,7 @@
 const express = require("express");
 const crypto = require("crypto");
 const path = require("path");
+const bcrypt = require("bcryptjs");
 const supabase = require("./supabase");
 
 const app = express();
