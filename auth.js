@@ -63,8 +63,8 @@ async function setupSignup() {
     } catch (err) {
       message.textContent = "Unable to connect to server.";
     }
-  });
-      }
+    });
+}
 
 async function setupLogin() {
   const form = document.getElementById("login-form");
@@ -110,7 +110,6 @@ async function setupLogin() {
     }
   });
     }
-}
 
 function protectDashboard() {
   const session = getSession();
