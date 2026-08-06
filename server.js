@@ -123,9 +123,8 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
-// Profile
+// Profile (read)
 app.get("/api/profile/:id", async (req, res) => {
-
   const { data, error } = await supabase
     .from("users")
     .select("*")
@@ -133,16 +132,57 @@ app.get("/api/profile/:id", async (req, res) => {
     .single();
 
   if (error) {
-    return res.status(404).json({
-      error: "User not found."
-    });
+    return res.status(404).json({ error: "User not found." });
   }
 
   res.json(data);
-
 });
 
-// ================= END AUTH APIs =================
+// Profile (update)
+app.patch("/api/profile/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { full_name, email } = req.body;
+
+    if (!full_name && !email) {
+      return res.status(400).json({ error: "Nothing to update." });
+    }
+
+    // If email is changing, ensure it's not already taken by another user
+    if (email) {
+      const { data: existing } = await supabase
+        .from('users')
+        .select('id')
+        .eq('email', email)
+        .neq('id', id)
+        .maybeSingle();
+      if (existing) return res.status(400).json({ error: 'Email already in use.' });
+    }
+
+    const updates = {};
+    if (full_name) updates.full_name = full_name;
+    if (email) updates.email = email;
+
+    const { data, error } = await supabase
+      .from('users')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('profile update error', error);
+      return res.status(500).json({ error: 'Failed to update profile.' });
+    }
+
+    res.json({ success: true, user: data });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server Error' });
+  }
+});
+
+// ================= END AUTH / PROFILE APIs =================
 
 // ================= WALLET APIs (Supabase-backed) =================
 
