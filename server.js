@@ -2,10 +2,12 @@ const express = require("express");
 const crypto = require("crypto");
 const path = require("path");
 const bcrypt = require("bcryptjs");
+const cors = require("cors");
 const supabase = require("./supabase");
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 const APP_SECRET = process.env.CPX_SECRET || "YOUR_CPX_SECRET";
