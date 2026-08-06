@@ -68,6 +68,43 @@ app.post("/api/signup", async (req, res) => {
       });
     }
 
+    // Best-effort referral processing: if the signup included a referral_code,
+    // try to record the referral and increment the inviter's active_referrals.
+    try {
+      const providedCode = req.body && req.body.referral_code;
+      if (providedCode) {
+        const code = String(providedCode).trim();
+        const { data: inviter } = await supabase
+          .from('users')
+          .select('*')
+          .eq('referral_code', code)
+          .maybeSingle();
+
+        if (inviter && inviter.id) {
+          // Insert a referral record (table should exist in Supabase)
+          const { error: refErr } = await supabase
+            .from('referrals')
+            .insert({ inviter_id: inviter.id, referred_user_id: data.id });
+
+          if (refErr) {
+            console.error('Failed to insert referral record', refErr);
+          } else {
+            // Increment inviter active_referrals (best-effort)
+            await supabase
+              .from('users')
+              .update({ active_referrals: Number(inviter.active_referrals || 0) + 1 })
+              .eq('id', inviter.id);
+
+            // NOTE: Referral bonus awarding is intentionally left out here.
+            // The bonus should be awarded later when the referred user qualifies.
+          }
+        }
+      }
+    } catch (reff) {
+      console.error('Referral processing error', reff);
+      // non-fatal - don't block signup on referral recording problems
+    }
+
     res.json({
       success: true,
       user: data
@@ -123,8 +160,9 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
-// Profile (read)
+// Profile
 app.get("/api/profile/:id", async (req, res) => {
+
   const { data, error } = await supabase
     .from("users")
     .select("*")
@@ -132,58 +170,57 @@ app.get("/api/profile/:id", async (req, res) => {
     .single();
 
   if (error) {
-    return res.status(404).json({ error: "User not found." });
+    return res.status(404).json({
+      error: "User not found."
+    });
   }
 
   res.json(data);
+
 });
 
-// Profile (update)
-app.patch("/api/profile/:id", async (req, res) => {
+// List referrals for a user (inviter)
+app.get('/api/referrals/:id', async (req, res) => {
   try {
-    const id = req.params.id;
-    const { full_name, email } = req.body;
+    const userId = req.params.id;
+    if (!userId) return res.status(400).json({ error: 'Missing user id' });
 
-    if (!full_name && !email) {
-      return res.status(400).json({ error: "Nothing to update." });
+    const { data: rows, error: rowsErr } = await supabase
+      .from('referrals')
+      .select('*')
+      .eq('inviter_id', userId)
+      .order('created_at', { ascending: false });
+
+    if (rowsErr) {
+      console.error(rowsErr);
+      return res.status(500).json({ error: 'Failed to fetch referrals' });
     }
 
-    // If email is changing, ensure it's not already taken by another user
-    if (email) {
-      const { data: existing } = await supabase
+    const referredIds = (rows || []).map(r => r.referred_user_id).filter(Boolean);
+    let usersMap = {};
+    if (referredIds.length) {
+      const { data: users } = await supabase
         .from('users')
-        .select('id')
-        .eq('email', email)
-        .neq('id', id)
-        .maybeSingle();
-      if (existing) return res.status(400).json({ error: 'Email already in use.' });
+        .select('id, full_name, email, referral_code')
+        .in('id', referredIds);
+      (users || []).forEach(u => { usersMap[u.id] = u; });
     }
 
-    const updates = {};
-    if (full_name) updates.full_name = full_name;
-    if (email) updates.email = email;
+    const combined = (rows || []).map(r => ({
+      id: r.id,
+      referred_user_id: r.referred_user_id,
+      created_at: r.created_at,
+      user: usersMap[r.referred_user_id] || null
+    }));
 
-    const { data, error } = await supabase
-      .from('users')
-      .update(updates)
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) {
-      console.error('profile update error', error);
-      return res.status(500).json({ error: 'Failed to update profile.' });
-    }
-
-    res.json({ success: true, user: data });
+    res.json({ referrals: combined });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server Error' });
   }
 });
 
-// ================= END AUTH / PROFILE APIs =================
-
+// ================= END AUTH APIs =================
 // ================= WALLET APIs (Supabase-backed) =================
 
 // Get wallet summary, transactions and withdrawals for a user
