@@ -143,6 +143,118 @@ app.get("/api/profile/:id", async (req, res) => {
 });
 
 // ================= END AUTH APIs =================
+
+// ================= WALLET APIs (Supabase-backed) =================
+
+// Get wallet summary, transactions and withdrawals for a user
+app.get('/api/wallet', async (req, res) => {
+  try {
+    const userId = req.query.userId;
+    if (!userId) return res.status(400).json({ error: 'Missing userId' });
+
+    const { data: user, error: userError } = await supabase
+      .from('users')
+      .select('id, full_name, email, balance, earnings, referral_earnings, active_referrals, referral_code')
+      .eq('id', userId)
+      .single();
+
+    if (userError || !user) return res.status(404).json({ error: 'User not found' });
+
+    const { data: transactions, error: txError } = await supabase
+      .from('transactions')
+      .select('id, trans_id, title, type, amount, created_at')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+
+    if (txError) console.error('transactions error', txError);
+
+    const { data: withdrawals, error: wError } = await supabase
+      .from('withdrawals')
+      .select('id, amount, method, status, created_at')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+
+    if (wError) console.error('withdrawals error', wError);
+
+    res.json({ user, transactions: transactions || [], withdrawals: withdrawals || [] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server Error' });
+  }
+});
+
+// Request a withdrawal
+app.post('/api/withdraw', async (req, res) => {
+  try {
+    const { userId, amount, method } = req.body;
+    const value = Number(amount);
+
+    if (!userId || !method || !value) return res.status(400).json({ error: 'Missing parameters' });
+
+    // Enforce platform rules similar to frontend
+    const { data: user, error: userError } = await supabase
+      .from('users')
+      .select('balance, active_referrals')
+      .eq('id', userId)
+      .single();
+
+    if (userError || !user) return res.status(404).json({ error: 'User not found' });
+
+    const activeRefs = Number(user.active_referrals || 0);
+
+    if (activeRefs < 5) return res.status(400).json({ error: 'You need 5 active referrals before you can withdraw.' });
+
+    // Minimum withdrawal check — frontend enforces 10000 (₦10,000) in the UI; preserve that rule
+    if (value < 10000) return res.status(400).json({ error: 'Minimum withdrawal is ₦10,000.' });
+
+    if (Number(user.balance || 0) < value) return res.status(400).json({ error: 'Insufficient available balance.' });
+
+    // Perform update and inserts. Supabase does not support multi-statement transactions via client SDK,
+    // so perform operations sequentially and return an error if any step fails. For stronger guarantees
+    // consider using a Postgres function / RPC or the server-side service role key.
+    const { error: updateError } = await supabase
+      .from('users')
+      .update({ balance: Number(user.balance) - value })
+      .eq('id', userId);
+
+    if (updateError) {
+      console.error(updateError);
+      return res.status(500).json({ error: 'Failed to update balance.' });
+    }
+
+    const { error: wError } = await supabase
+      .from('withdrawals')
+      .insert({ user_id: userId, amount: value, method, status: 'Pending' });
+
+    if (wError) {
+      console.error(wError);
+      // Attempt to roll back the balance update where possible (best-effort)
+      await supabase.from('users').update({ balance: Number(user.balance) }).eq('id', userId);
+      return res.status(500).json({ error: 'Failed to create withdrawal request.' });
+    }
+
+    const { error: txError } = await supabase
+      .from('transactions')
+      .insert({ user_id: userId, type: 'withdrawal', title: 'Withdrawal request', amount: -value });
+
+    if (txError) {
+      console.error(txError);
+      // best-effort rollback of withdrawal record + balance
+      await supabase.from('withdrawals').delete().eq('user_id', userId).eq('amount', value);
+      await supabase.from('users').update({ balance: Number(user.balance) }).eq('id', userId);
+      return res.status(500).json({ error: 'Failed to record transaction.' });
+    }
+
+    return res.status(201).json({ ok: true });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server Error' });
+  }
+});
+
+// ================= END WALLET APIs =================
+
 // Health check
 app.get("/health", (req, res) => {
   res.json({ status: "ok" });
