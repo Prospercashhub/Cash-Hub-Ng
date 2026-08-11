@@ -10,251 +10,236 @@
 <body class="dashboard-page">
 
 <header class="dash-header">
-<a class="logo" href="dashboard.html">Cash<span>Hub</span> NG</a>
+  <a class="logo" href="dashboard.html">Cash<span>Hub</span> NG</a>
 
-<div class="dash-user">
-<span class="avatar">👤</span>
-<span>Welcome,
-<strong id="profile-name">Member</strong>
-</span>
-</div>
+  <div class="dash-user">
+    <span class="avatar">👤</span>
+    <span>
+      Welcome,
+      <strong id="profile-name">Member</strong>
+    </span>
+  </div>
 
-<button class="logout-btn" onclick="logout()">
-Logout
-</button>
-
+  <button class="logout-btn" onclick="logout()">
+    Logout
+  </button>
 </header>
 
 <main class="dashboard">
 
 <section class="dash-welcome">
+  <div style="text-align:center">
 
-<div style="text-align:center">
+    <div style="font-size:90px">👤</div>
 
-<div style="font-size:90px">
-👤
-</div>
+    <h2 id="profile-fullname">Member</h2>
 
-<h2 id="profile-fullname">
-Member
-</h2>
+    <p id="profile-email">member@email.com</p>
 
-<p id="profile-email">
-member@email.com
-</p>
+    <p>
+      User ID:
+      <strong id="profile-id">CH000001</strong>
+    </p>
 
-<p>
-User ID:
-<strong id="profile-id">
-CH000001
-</strong>
-</p>
-
-</div>
-
+  </div>
 </section>
 
 <section class="balance-grid">
 
-<div class="balance-box main-balance">
+  <div class="balance-box main-balance">
+    <span>Available Balance</span>
+    <strong id="profile-balance">₦0.00</strong>
+    <small>Wallet Balance</small>
+  </div>
 
-<span>Available Balance</span>
+  <div class="balance-box">
+    <span>Total Earnings</span>
+    <strong id="profile-total">₦0.00</strong>
+    <small>Lifetime Earnings</small>
+  </div>
 
-<strong id="profile-balance">
-₦0.00
-</strong>
-
-<small>Wallet Balance</small>
-
-</div>
-
-<div class="balance-box">
-
-<span>Total Earnings</span>
-
-<strong id="profile-total">
-₦0.00
-</strong>
-
-<small>Lifetime Earnings</small>
-
-</div>
-
-<div class="balance-box">
-
-<span>Referral Earnings</span>
-
-<strong id="profile-referral">
-₦0.00
-</strong>
-
-<small>Referral Bonus</small>
-
-</div>
+  <div class="balance-box">
+    <span>Referral Earnings</span>
+    <strong id="profile-referral">₦0.00</strong>
+    <small>Referral Bonus</small>
+  </div>
 
 </section>
 
 <section class="panel">
 
-<p class="eyebrow">
-REFERRAL CENTER
-</p>
+  <p class="eyebrow">REFERRAL CENTER</p>
 
-<h2>
-Invite Friends & Earn
-</h2>
+  <h2>Invite Friends & Earn</h2>
 
-<p>
-Referral Code
-</p>
+  <p>Referral Code</p>
 
-<h3 id="ref-code">
-CH000001
-</h3>
+  <h3 id="ref-code">CH000001</h3>
 
-<p>
-Referral Link
-</p>
+  <p>Referral Link</p>
 
-<input
-type="text"
-id="ref-link"
-readonly
-value="https://cash-hub-ng.onrender.com/signup.html?ref=CH000001">
+  <input
+    type="text"
+    id="ref-link"
+    readonly
+    value="">
 
-<button class="primary-btn" onclick="copyReferral()">
-Copy Referral Link
-</button>
+  <button
+    class="primary-btn"
+    onclick="copyReferral()">
+    Copy Referral Link
+  </button>
 
-<br><br>
+  <br><br>
 
-<h3>
-Referral Progress
-</h3>
+  <h3>Referral Progress</h3>
 
-<p>
-<span id="ref-count">
-0
-</span>/5 Active Referrals
-</p>
+  <p>
+    <span id="ref-count">0</span>/5 Active Referrals
+  </p>
 
-<progress
-id="ref-progress"
-value="0"
-max="5"
-style="width:100%">
-</progress>
-
-<br><br><section class="panel">
-
-<p class="eyebrow">
-WITHDRAWAL STATUS
-</p>
-
-<h2>
-Withdrawal Requirements
-</h2>
-
-<div class="balance-box">
-
-<h3 id="withdraw-status">
-🔒 Locked
-</h3>
-
-<p>
-You must complete the following before you can withdraw:
-</p>
-
-<ul>
-<li>✅ Reach the minimum withdrawal amount.</li>
-<li>❌ Refer at least <strong>5 active users</strong>.</li>
-<li>✅ Keep your account active.</li>
-</ul>
-
-<p id="withdraw-message">
-You need
-<strong>5 active referrals</strong>
-to unlock withdrawals.
-</p>
-
-</div>
+  <progress
+    id="ref-progress"
+    value="0"
+    max="5"
+    style="width:100%">
+  </progress>
 
 </section>
 
 <section class="panel">
 
-<p class="eyebrow">
-ACCOUNT SETTINGS
-</p>
+  <p class="eyebrow">WITHDRAWAL STATUS</p>
 
-<div class="quick-actions">
+  <h2>Withdrawal Requirements</h2>
 
-<a href="wallet.html">
-<b>💳</b>
-<span>
-<strong>Wallet</strong>
-<small>View Wallet</small>
-</span>
-</a>
+  <div class="balance-box">
 
-<a href="dashboard.html">
-<b>🏠</b>
-<span>
-<strong>Dashboard</strong>
-<small>Back Home</small>
-</span>
-</a>
+    <h3 id="withdraw-status">🔒 Locked</h3>
 
-<a href="#" onclick="logout()">
-<b>🚪</b>
-<span>
-<strong>Logout</strong>
-<small>Sign Out</small>
-</span>
-</a>
+    <p>
+      You must complete the following before you can withdraw:
+    </p>
 
-</div>
+    <ul>
+      <li>✅ Reach the minimum withdrawal amount.</li>
+      <li>❌ Refer at least <strong>5 active users</strong>.</li>
+      <li>✅ Keep your account active.</li>
+    </ul>
+
+    <p id="withdraw-message">
+      You need
+      <strong>5 active referrals</strong>
+      to unlock withdrawals.
+    </p>
+
+  </div>
+
+</section>
+
+<section class="panel">
+
+  <p class="eyebrow">ACCOUNT SETTINGS</p>
+
+  <div id="profile-actions" class="quick-actions">
+
+    <button
+      class="primary-btn"
+      onclick="enterEditMode()">
+      Edit Profile
+    </button>
+
+  </div>
+
+  <div id="profile-message"></div>
+
+  <div class="quick-actions">
+
+    <a href="wallet.html">
+      <b>💳</b>
+      <span>
+        <strong>Wallet</strong>
+        <small>View Wallet</small>
+      </span>
+    </a>
+
+    <a href="dashboard.html">
+      <b>🏠</b>
+      <span>
+        <strong>Dashboard</strong>
+        <small>Back Home</small>
+      </span>
+    </a>
+
+    <a href="#" onclick="logout()">
+      <b>🚪</b>
+      <span>
+        <strong>Logout</strong>
+        <small>Sign Out</small>
+      </span>
+    </a>
+
+  </div>
 
 </section>
 
 </main>
 
 <nav class="bottom-nav">
-<a href="dashboard.html">
-⌂
-<span>Home</span>
-</a>
 
-<a href="earn.html">
-🎯
-<span>Earn</span>
-</a>
+  <a href="dashboard.html">
+    ⌂
+    <span>Home</span>
+  </a>
 
-<a href="wallet.html">
-💳
-<span>Wallet</span>
-</a>
+  <a href="earn.html">
+    🎯
+    <span>Earn</span>
+  </a>
 
-<a class="active" href="profile.html">
-👤
-<span>Profile</span>
-</a>
+  <a href="wallet.html">
+    💳
+    <span>Wallet</span>
+  </a>
+
+  <a class="active" href="profile.html">
+    👤
+    <span>Profile</span>
+  </a>
+
 </nav>
 
+<!-- IMPORTANT: api.js MUST load before files that use api() -->
+<script src="api.js"></script>
+<script src="auth.js"></script>
+<script src="profile.js"></script>
+
 <script>
-function copyReferral(){
-const link=document.getElementById("ref-link");
-link.select();
-link.setSelectionRange(0,99999);
-navigator.clipboard.writeText(link.value);
-alert("Referral link copied!");
+if (typeof protectDashboard === "function") {
+  protectDashboard();
 }
 </script>
 
-<script src="auth.js"></script>
-
 <script>
-protectDashboard();
+function copyReferral() {
+  const link = document.getElementById("ref-link");
+
+  if (!link) return;
+
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(link.value)
+      .then(() => alert("Referral link copied!"))
+      .catch(() => {
+        link.select();
+        document.execCommand("copy");
+        alert("Referral link copied!");
+      });
+  } else {
+    link.select();
+    document.execCommand("copy");
+    alert("Referral link copied!");
+  }
+}
 </script>
 
 </body>
