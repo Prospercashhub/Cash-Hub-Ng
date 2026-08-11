@@ -1,71 +1,187 @@
-// Client-side wallet that uses server APIs instead of localStorage
+// Cash Hub NG client-side wallet
+// Uses the central API adapter from api.js.
 
-async function apiFetch(url, opts) {
+function getSession() {
   try {
-    const res = await fetch(url, opts);
-    const data = await res.json().catch(() => null);
-    if (!res.ok) throw new Error((data && data.error) || 'Request failed');
-    return data;
-  } catch (e) {
-    console.error('apiFetch', e);
+    return JSON.parse(
+      localStorage.getItem("cashHubNgSession") || "null"
+    );
+  } catch {
     return null;
   }
 }
 
-function getSession() {
-  try { return JSON.parse(localStorage.getItem('cashHubNgSession') || 'null'); } catch { return null; }
-}
-
 async function renderWallet() {
   const session = getSession();
-  if (!session) { window.location.href = 'login.html'; return; }
 
-  const data = await apiFetch(`/api/wallet?userId=${encodeURIComponent(session.id)}`);
-  if (!data || !data.user) { console.error('Failed to load wallet'); return; }
+  if (!session) {
+    window.location.href = "login.html";
+    return;
+  }
 
-  const user = data.user;
-  const bal = document.getElementById('wallet-balance');
-  if (bal) bal.textContent = '₦' + Number(user.balance || 0).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  try {
+    const data = await api(
+      `/api/wallet?userId=${encodeURIComponent(session.id)}`
+    );
 
-  const list = document.getElementById('transactions');
-  const tx = data.transactions || [];
-  if (list) list.innerHTML = tx.length ? tx.map(t => `<div class="transaction"><div><strong>${t.title}</strong><small>${new Date(t.created_at).toLocaleString()}</small></div><b class="${t.amount >= 0 ? 'positive' : 'negative'}">${t.amount >= 0 ? '+' : ''}₦${Number(t.amount).toLocaleString('en-NG',{minimumFractionDigits:2,maximumFractionDigits:2})}</b></div>`).join('') : `<div class="empty-state"><span>📋</span><h3>No transactions yet</h3><p>Your earning and wallet activity will appear here.</p></div>`;
+    if (!data || !data.user) {
+      throw new Error("Unable to load wallet.");
+    }
 
-  renderWithdrawals(data.withdrawals || []);
+    const user = data.user;
+
+    const balanceEl = document.getElementById("wallet-balance");
+
+    if (balanceEl) {
+      balanceEl.textContent =
+        "₦" +
+        Number(user.balance || 0).toLocaleString("en-NG", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+    }
+
+    renderTransactions(data.transactions || []);
+    renderWithdrawals(data.withdrawals || []);
+  } catch (error) {
+    console.error("Wallet loading error:", error);
+
+    const transactions = document.getElementById("transactions");
+
+    if (transactions) {
+      transactions.innerHTML = `
+        <div class="empty-state">
+          <span>⚠️</span>
+          <h3>Unable to load wallet</h3>
+          <p>${error.message || "Please try again later."}</p>
+        </div>
+      `;
+    }
+  }
+}
+
+function renderTransactions(rows) {
+  const box = document.getElementById("transactions");
+
+  if (!box) return;
+
+  if (!rows.length) {
+    box.innerHTML = `
+      <div class="empty-state">
+        <span>📋</span>
+        <h3>No transactions yet</h3>
+        <p>Your earning and wallet activity will appear here.</p>
+      </div>
+    `;
+    return;
+  }
+
+  box.innerHTML = rows.map(t => {
+    const amount = Number(t.amount || 0);
+    const positive = amount >= 0;
+
+    return `
+      <div class="transaction">
+        <div>
+          <strong>${t.title || "Transaction"}</strong>
+          <small>${t.created_at ? new Date(t.created_at).toLocaleString() : ""}</small>
+        </div>
+        <b class="${positive ? "positive" : "negative"}">
+          ${positive ? "+" : "-"}₦${Math.abs(amount).toLocaleString("en-NG", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          })}
+        </b>
+      </div>
+    `;
+  }).join("");
 }
 
 function renderWithdrawals(rows) {
-  const box = document.getElementById('withdrawals');
+  const box = document.getElementById("withdrawals");
+
   if (!box) return;
-  if (!rows || !rows.length) {
-    box.innerHTML = `<div class="empty-state"><span>💳</span><h3>No withdrawal requests</h3><p>Requests will appear here for review.</p></div>`;
+
+  if (!rows.length) {
+    box.innerHTML = `
+      <div class="empty-state">
+        <span>💳</span>
+        <h3>No withdrawal requests</h3>
+        <p>Your withdrawal requests will appear here.</p>
+      </div>
+    `;
     return;
   }
-  box.innerHTML = rows.map(w => `<div class="admin-row"><div><strong>${w.method}</strong><small>${new Date(w.created_at).toLocaleString()}</small></div><span class="status pending">${w.status}</span><b>₦${Number(w.amount).toLocaleString('en-NG',{minimumFractionDigits:2,maximumFractionDigits:2})}</b></div>`).join('');
+
+  box.innerHTML = rows.map(w => `
+    <div class="admin-row">
+      <div>
+        <strong>${w.method || "Withdrawal"}</strong>
+        <small>${w.created_at ? new Date(w.created_at).toLocaleString() : ""}</small>
+      </div>
+      <span class="status pending">${w.status || "Pending"}</span>
+      <b>
+        ₦${Number(w.amount || 0).toLocaleString("en-NG", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        })}
+      </b>
+    </div>
+  `).join("");
 }
 
-async function requestWithdrawal(){
+async function requestWithdrawal() {
   const session = getSession();
-  if (!session) { window.location.href = 'login.html'; return; }
 
-  const amount = Number(document.getElementById('withdraw-amount').value);
-  const method = document.getElementById('withdraw-method').value;
-  const statusEl = document.getElementById('withdraw-message');
+  if (!session) {
+    window.location.href = "login.html";
+    return;
+  }
 
-  if (!amount || amount <= 0) { if (statusEl) statusEl.textContent = 'Enter a valid withdrawal amount.'; return; }
+  const amountEl = document.getElementById("withdraw-amount");
+  const methodEl = document.getElementById("withdraw-method");
+  const statusEl = document.getElementById("withdraw-message");
 
-  const res = await apiFetch('/api/withdraw', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ userId: session.id, amount, method })
-  });
+  const amount = Number(amountEl ? amountEl.value : 0);
+  const method = methodEl ? methodEl.value : "";
 
-  if (!res) { if (statusEl) statusEl.textContent = 'Unable to submit withdrawal request.'; return; }
-  if (res.error) { if (statusEl) statusEl.textContent = res.error; return; }
+  if (!amount || amount <= 0) {
+    if (statusEl) {
+      statusEl.textContent = "Enter a valid withdrawal amount.";
+    }
+    return;
+  }
 
-  if (statusEl) statusEl.textContent = 'Withdrawal request submitted for review.';
-  document.getElementById('withdraw-amount').value = '';
-  await renderWallet();
+  try {
+    await api("/api/withdraw", {
+      method: "POST",
+      body: JSON.stringify({
+        userId: session.id,
+        amount,
+        method
+      })
+    });
+
+    if (statusEl) {
+      statusEl.textContent =
+        "Withdrawal request submitted for review.";
+    }
+
+    if (amountEl) {
+      amountEl.value = "";
+    }
+
+    await renderWallet();
+  } catch (error) {
+    console.error("Withdrawal error:", error);
+
+    if (statusEl) {
+      statusEl.textContent =
+        error.message || "Unable to submit withdrawal request.";
+    }
+  }
 }
 
 window.renderWallet = renderWallet;
+window.renderWithdrawals = renderWithdrawals;
 window.requestWithdrawal = requestWithdrawal;
