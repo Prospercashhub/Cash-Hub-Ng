@@ -10,7 +10,8 @@
 <header class="dash-header">
   <a class="logo" href="index.html">Cash<span>Hub</span> NG</a>
   <div class="dash-user"><span class="avatar">CH</span><span>Welcome back, <strong id="user-name">Member</strong> 👋</span></div>
-<button class="logout-btn" onclick="logout()">Logout</button></header>
+  <button class="logout-btn" onclick="logout()">Logout</button>
+</header>
 
 <main class="dashboard">
   <section class="dash-welcome">
@@ -45,8 +46,13 @@
       <div class="section-title"><h2>Recent transactions</h2><a href="wallet.html">View all →</a></div>
       <div id="recent-transactions" class="transactions-placeholder"><div class="empty-state"><span>📋</span><h3>Loading…</h3><p>Fetching recent activity.</p></div></div>
     </div>
+
     <div id="referrals" class="panel referral-panel">
-      <p class="eyebrow">REFERRAL PROGRAM</p><h2>Earn with your friends.</h2><p>Invite friends using your referral link and participate in the referral program when eligible.</p><a class="primary-btn" href="referrals.html">Open Referral Center →</a><div id="copy-status"></div>
+      <p class="eyebrow">REFERRAL PROGRAM</p>
+      <h2>Earn with your friends.</h2>
+      <p>Invite friends using your referral link and participate in the referral program when eligible.</p>
+      <a class="primary-btn" href="referrals.html">Open Referral Center →</a>
+      <div id="copy-status"></div>
       <div style="margin-top:12px"><strong>Active referrals: <span id="dashboard-ref-count">0</span></strong></div>
     </div>
   </section>
@@ -58,15 +64,20 @@
   <a href="wallet.html">💳<span>Wallet</span></a>
   <a href="profile.html">👤<span>Profile</span></a>
 </nav>
+
 <script>
 function copyReferral(){
   const link='https://cashhubng.example/ref/CH0001';
-  if(navigator.clipboard){navigator.clipboard.writeText(link);} 
+  if(navigator.clipboard){navigator.clipboard.writeText(link);}
   const el = document.getElementById('copy-status');
   if(el) el.textContent='Referral link copied!';
 }
 </script>
-<script src="auth.js"></script><script>protectDashboard();</script>
+
+<script src="api.js"></script>
+<script src="auth.js"></script>
+<script>protectDashboard();</script>
 <script src="dashboard.js"></script>
+
 </body>
-</html>
+  </html>
