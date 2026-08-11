@@ -1,1 +1,51 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Login | Cash Hub NG</title><link rel="stylesheet" href="style.css"></head><body><main class="auth"><div class="auth-card"><a class="logo" href="index.html">Cash<span>Hub</span> NG</a><h1>Welcome back</h1><p>Log in to access your Cash Hub NG account.</p><form id="login-form"><label>Email address</label><input id="email" type="email" required autocomplete="email" placeholder="you@example.com"><label>Password</label><input id="password" type="password" required autocomplete="current-password" placeholder="Your password"><button class="primary-btn" type="submit">Login</button><div id="auth-message"></div></form><p>Don't have an account? <a href="signup.html">Join Now</a></p></div></main><script src="auth.js"></script><script>setupLogin();</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Login | Cash Hub NG</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="auth">
+    <div class="auth-card">
+      <a class="logo" href="index.html">Cash<span>Hub</span> NG</a>
+
+      <h1>Welcome back</h1>
+      <p>Log in to access your Cash Hub NG account.</p>
+
+      <form id="login-form">
+        <label>Email address</label>
+        <input
+          id="email"
+          type="email"
+          required
+          autocomplete="email"
+          placeholder="you@example.com"
+        >
+
+        <label>Password</label>
+        <input
+          id="password"
+          type="password"
+          required
+          autocomplete="current-password"
+          placeholder="Your password"
+        >
+
+        <button class="primary-btn" type="submit">Login</button>
+        <div id="auth-message"></div>
+      </form>
+
+      <p>Don't have an account? <a href="signup.html">Join Now</a></p>
+    </div>
+  </main>
+
+  <!-- API adapter must load before auth.js -->
+  <script src="api.js"></script>
+  <script src="auth.js"></script>
+  <script>
+    setupLogin();
+  </script>
+</body>
+    </html>
