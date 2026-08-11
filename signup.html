@@ -1,1 +1,81 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Join | Cash Hub NG</title><link rel="stylesheet" href="style.css"></head><body><main class="auth"><div class="auth-card"><a class="logo" href="index.html">Cash<span>Hub</span> NG</a><h1>Create your account</h1><p id="referral-note">Join Cash Hub NG and start exploring available earning activities.</p><form id="signup-form"><label>Full name</label><input id="full-name" required autocomplete="name" placeholder="Your full name"><label>Email address</label><input id="email" type="email" required autocomplete="email" placeholder="you@example.com"><label>Password</label><input id="password" type="password" required minlength="6" autocomplete="new-password" placeholder="Create a password"><label>Confirm password</label><input id="confirm-password" type="password" required minlength="6" autocomplete="new-password" placeholder="Repeat your password"><button class="primary-btn" type="submit">Create Account</button><div id="auth-message"></div></form><p>Already have an account? <a href="login.html">Login</a></p></div></main><script src="auth.js"></script><script src="referrals.js"></script><script>setupReferralSignup();setupSignup();</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Join | Cash Hub NG</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="auth">
+    <div class="auth-card">
+      <a class="logo" href="index.html">Cash<span>Hub</span> NG</a>
+
+      <h1>Create your account</h1>
+      <p id="referral-note">
+        Join Cash Hub NG and start exploring available earning activities.
+      </p>
+
+      <form id="signup-form">
+        <label>Full name</label>
+        <input
+          id="full-name"
+          required
+          autocomplete="name"
+          placeholder="Your full name"
+        >
+
+        <label>Email address</label>
+        <input
+          id="email"
+          type="email"
+          required
+          autocomplete="email"
+          placeholder="you@example.com"
+        >
+
+        <label>Password</label>
+        <input
+          id="password"
+          type="password"
+          required
+          minlength="6"
+          autocomplete="new-password"
+          placeholder="Create a password"
+        >
+
+        <label>Confirm password</label>
+        <input
+          id="confirm-password"
+          type="password"
+          required
+          minlength="6"
+          autocomplete="new-password"
+          placeholder="Repeat your password"
+        >
+
+        <button class="primary-btn" type="submit">
+          Create Account
+        </button>
+
+        <div id="auth-message"></div>
+      </form>
+
+      <p>
+        Already have an account?
+        <a href="login.html">Login</a>
+      </p>
+    </div>
+  </main>
+
+  <!-- api.js MUST load before auth.js -->
+  <script src="api.js"></script>
+  <script src="auth.js"></script>
+  <script src="referrals.js"></script>
+
+  <script>
+    setupReferralSignup();
+    setupSignup();
+  </script>
+</body>
+  </html>
