@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cash Hub NG - Earn</title>
 <link rel="stylesheet" href="style.css">
+
 <style>
 body{
     font-family:Arial,sans-serif;
@@ -59,9 +60,15 @@ Open CPX Offerwall
 
 </div>
 
+<!-- Load the central API adapter before application scripts -->
+<script src="api.js"></script>
+<script src="auth.js"></script>
+
 <script>
 async function openOfferwall() {
-  const session = JSON.parse(localStorage.getItem("cashHubNgSession") || "null");
+  const session = JSON.parse(
+    localStorage.getItem("cashHubNgSession") || "null"
+  );
 
   if (!session) {
     alert("Please login first.");
@@ -69,25 +76,39 @@ async function openOfferwall() {
     return;
   }
 
-  const response = await fetch(
-    "https://cash-hub-ng2.onrender.com/api/cpx-hash?userId=" +
-    encodeURIComponent(session.id)
-  );
+  try {
+    /*
+     * CPX integration intentionally remains unchanged.
+     * The CPX hash is still requested from the existing backend endpoint.
+     */
+    const response = await fetch(
+      "https://cash-hub-ng2.onrender.com/api/cpx-hash?userId=" +
+      encodeURIComponent(session.id)
+    );
 
-  const data = await response.json();
+    const data = await response.json();
 
-  const offerUrl =
-    "https://offers.cpx-research.com/index.php" +
-    "?app_id=34986" +
-    "&user_id=" + encodeURIComponent(session.id) +
-    "&secure_hash=" + encodeURIComponent(data.secureHash) +
-    "&email=" + encodeURIComponent(session.email) +
-    "&username=" + encodeURIComponent(session.name);
+    if (!response.ok || !data.secureHash) {
+      throw new Error(data.error || "Unable to create CPX secure hash.");
+    }
 
-  document.getElementById("offerwall").innerHTML =
-    '<iframe src="' + offerUrl + '"></iframe>';
+    const offerUrl =
+      "https://offers.cpx-research.com/index.php" +
+      "?app_id=34986" +
+      "&user_id=" + encodeURIComponent(session.id) +
+      "&secure_hash=" + encodeURIComponent(data.secureHash) +
+      "&email=" + encodeURIComponent(session.email || "") +
+      "&username=" + encodeURIComponent(session.name || "");
+
+    document.getElementById("offerwall").innerHTML =
+      '<iframe src="' + offerUrl + '"></iframe>';
+
+  } catch (error) {
+    console.error("CPX offerwall error:", error);
+    alert(error.message || "Unable to open the offerwall. Please try again.");
+  }
 }
 </script>
 
 </body>
-</html>
+    </html>
