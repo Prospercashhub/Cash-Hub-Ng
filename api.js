@@ -5,7 +5,7 @@ const API_BASE = "https://cash-hub-ng2.onrender.com";
 
 async function api(path, options = {}) {
   const r = await fetch(API_BASE + path, {
-    credentials: "include",
+    credentials: "omit",
     headers: {
       "Content-Type": "application/json",
       ...(options.headers || {})
