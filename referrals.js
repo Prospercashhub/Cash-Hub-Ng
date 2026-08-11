@@ -1,6 +1,7 @@
 /*
   Cash Hub NG referrals
   Uses the central API adapter from api.js.
+  Referral data is server-backed.
 */
 
 function getSessionLocal() {
@@ -128,7 +129,10 @@ async function renderReferral() {
       .join("");
 
   } catch (error) {
-    console.error("Referral loading error:", error);
+    console.error(
+      "Referral loading error:",
+      error
+    );
 
     const listEl =
       document.getElementById("ref-list") ||
@@ -149,7 +153,8 @@ async function renderReferral() {
 }
 
 function copyRef() {
-  const input = document.getElementById("ref-link");
+  const input =
+    document.getElementById("ref-link");
 
   if (!input) return;
 
@@ -165,12 +170,14 @@ function copyRef() {
     document.getElementById("copy-status");
 
   if (status) {
-    status.textContent = "Referral link copied!";
+    status.textContent =
+      "Referral link copied!";
   }
 }
 
 function shareRef() {
-  const input = document.getElementById("ref-link");
+  const input =
+    document.getElementById("ref-link");
 
   const url = input
     ? input.value
@@ -181,7 +188,7 @@ function shareRef() {
       title: "Join Cash Hub NG",
       text: "Join me on Cash Hub NG",
       url
-    });
+    }).catch(() => {});
   }
 }
 
@@ -199,43 +206,25 @@ function setupReferralSignup() {
       "You were invited! We'll apply the referral when you sign up.";
   }
 
+  /*
+    The referral code is temporarily stored only
+    for the signup flow. The actual referral relationship
+    is created by the server and stored in Supabase.
+  */
   sessionStorage.setItem(
     "cashHubReferralCode",
     String(code)
   );
 }
 
-function attachReferralToNewUser(user) {
-  try {
-    const users = JSON.parse(
-      localStorage.getItem("cashHubNgUsers") || "[]"
-    );
+window.renderReferral =
+  renderReferral;
 
-    const idx =
-      users.findIndex(x => x.id === user.id);
+window.copyRef =
+  copyRef;
 
-    if (idx >= 0) {
-      users[idx] = user;
-    } else {
-      users.unshift(user);
-    }
+window.shareRef =
+  shareRef;
 
-    localStorage.setItem(
-      "cashHubNgUsers",
-      JSON.stringify(users)
-    );
-
-  } catch (error) {
-    console.error(
-      "Referral local cache error:",
-      error
-    );
-  }
-}
-
-window.renderReferral = renderReferral;
-window.copyRef = copyRef;
-window.shareRef = shareRef;
-window.setupReferralSignup = setupReferralSignup;
-window.attachReferralToNewUser =
-  attachReferralToNewUser;
+window.setupReferralSignup =
+  setupReferralSignup;
