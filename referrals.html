@@ -3,7 +3,10 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>Referrals | Cash Hub NG</title>
 
@@ -14,135 +17,187 @@
 
   <header class="dash-header">
 
-    <a class="logo" href="index.html">
+    <a class="logo" href="dashboard.html">
       Cash<span>Hub</span> NG
     </a>
 
-    <div class="earn-header-actions">
+    <div class="dash-user">
+      <span class="avatar">👤</span>
 
-      <a href="dashboard.html">
-        Dashboard
-      </a>
-
-      <button
-        class="logout-btn"
-        onclick="logout()">
-        Logout
-      </button>
-
+      <span>
+        Welcome,
+        <strong id="user-name">Member</strong>
+      </span>
     </div>
+
+    <button
+      class="logout-btn"
+      type="button"
+      onclick="logout()"
+    >
+      Logout
+    </button>
 
   </header>
 
 
-  <main class="ref-page">
+  <main class="dashboard">
 
-    <p class="eyebrow">
-      REFERRAL PROGRAM
-    </p>
+    <section class="dash-welcome">
 
-    <h1>
-      Invite friends. Earn together.
-    </h1>
+      <p class="eyebrow">
+        REFERRAL CENTER
+      </p>
 
-    <p class="ref-intro">
-      Share your unique referral link and earn a demo referral bonus when a friend joins through your link.
-    </p>
+      <h2>
+        Invite Friends & Earn
+      </h2>
 
-
-    <section class="ref-stats">
-
-      <div>
-        <span>
-          Referral Earnings
-        </span>
-
-        <strong id="ref-earnings">
-          ₦0.00
-        </strong>
-      </div>
-
-
-      <div>
-        <span>
-          Friends Referred
-        </span>
-
-        <strong id="ref-count">
-          0
-        </strong>
-      </div>
-
-
-      <div>
-        <span>
-          Your Code
-        </span>
-
-        <strong id="ref-code">
-          CH000000
-        </strong>
-      </div>
+      <p>
+        Share your referral link and earn referral rewards.
+      </p>
 
     </section>
 
 
-    <section class="ref-share panel">
+    <section class="balance-grid">
 
-      <h2>
-        Your referral link
-      </h2>
+      <div class="balance-box">
 
-      <p>
-        Copy the link below and share it with your friends.
-      </p>
+        <span>Referral Code</span>
 
+        <strong id="ref-code">
+          —
+        </strong>
 
-      <div class="share-row">
-
-        <input
-          type="text"
-          id="ref-link"
-          readonly
-          value=""
-        >
-
-        <button
-          class="primary-btn"
-          onclick="copyRef()">
-          Copy
-        </button>
-
-        <button
-          class="share-btn"
-          onclick="shareRef()">
-          Share
-        </button>
+        <small>
+          Your unique code
+        </small>
 
       </div>
 
 
-      <div id="ref-copy-status"></div>
+      <div class="balance-box">
+
+        <span>Active Referrals</span>
+
+        <strong id="ref-count">
+          0
+        </strong>
+
+        <small>
+          Referrals
+        </small>
+
+      </div>
+
+
+      <div class="balance-box">
+
+        <span>Referral Earnings</span>
+
+        <strong id="ref-earnings">
+          ₦0.00
+        </strong>
+
+        <small>
+          Referral bonus
+        </small>
+
+      </div>
 
     </section>
 
 
     <section class="panel">
 
-      <div class="section-title">
+      <p class="eyebrow">
+        YOUR REFERRAL LINK
+      </p>
 
-        <h2>
-          Your referrals
-        </h2>
+      <h2>
+        Invite your friends
+      </h2>
 
-        <a href="earn.html">
-          Earn more →
-        </a>
+      <p>
+        Copy your link and share it with friends.
+      </p>
 
-      </div>
+      <input
+        type="text"
+        id="ref-link"
+        readonly
+        value=""
+      >
 
+      <br><br>
+
+      <button
+        class="primary-btn"
+        type="button"
+        onclick="copyRef()"
+      >
+        Copy Referral Link
+      </button>
+
+      <button
+        class="secondary-btn"
+        type="button"
+        onclick="shareRef()"
+      >
+        Share
+      </button>
+
+      <p id="ref-copy-status"></p>
+
+    </section>
+
+
+    <section class="panel">
+
+      <p class="eyebrow">
+        REFERRAL PROGRESS
+      </p>
+
+      <h2>
+        Withdrawal Requirement
+      </h2>
+
+      <p>
+        You need at least
+        <strong>5 active referrals</strong>
+        before withdrawals are unlocked.
+      </p>
+
+      <progress
+        id="ref-progress"
+        value="0"
+        max="5"
+        style="width:100%"
+      ></progress>
+
+      <p>
+        <strong id="ref-count-progress">
+          0
+        </strong>
+        / 5 Active Referrals
+      </p>
+
+    </section>
+
+
+    <section class="panel">
+
+      <p class="eyebrow">
+        MY REFERRALS
+      </p>
+
+      <h2>
+        People you referred
+      </h2>
 
       <div id="ref-list">
+
         <div class="empty-state">
           <span>👥</span>
 
@@ -151,25 +206,68 @@
           </h3>
 
           <p>
-            Please wait while we load your referral information.
+            Please wait.
           </p>
         </div>
+
       </div>
 
     </section>
 
 
-    <div class="earn-note">
+    <section class="panel">
 
-      <strong>
-        Referral program note
-      </strong>
-
-      <p>
-        The current referral bonus is a prototype value. Before launch, we'll configure real referral rules, fraud prevention, eligibility requirements and payout terms.
+      <p class="eyebrow">
+        ACCOUNT
       </p>
 
-    </div>
+      <div class="quick-actions">
+
+        <a href="dashboard.html">
+          <b>🏠</b>
+
+          <span>
+            <strong>Dashboard</strong>
+            <small>Back Home</small>
+          </span>
+        </a>
+
+
+        <a href="wallet.html">
+          <b>💳</b>
+
+          <span>
+            <strong>Wallet</strong>
+            <small>View Wallet</small>
+          </span>
+        </a>
+
+
+        <a href="profile.html">
+          <b>👤</b>
+
+          <span>
+            <strong>Profile</strong>
+            <small>My Profile</small>
+          </span>
+        </a>
+
+
+        <a
+          href="#"
+          onclick="logout(); return false;"
+        >
+          <b>🚪</b>
+
+          <span>
+            <strong>Logout</strong>
+            <small>Sign Out</small>
+          </span>
+        </a>
+
+      </div>
+
+    </section>
 
   </main>
 
@@ -191,32 +289,41 @@
       <span>Wallet</span>
     </a>
 
-    <a
-      class="active"
-      href="referrals.html">
+    <a class="active" href="referrals.html">
       👥
       <span>Referrals</span>
+    </a>
+
+    <a href="profile.html">
+      👤
+      <span>Profile</span>
     </a>
 
   </nav>
 
 
-  <!-- API adapter MUST load first -->
+  <!-- IMPORTANT SCRIPT ORDER -->
+
   <script src="api.js"></script>
 
-  <!-- Authentication/session -->
   <script src="auth.js"></script>
 
-  <!-- Referral functionality -->
   <script src="referrals.js"></script>
 
 
   <script>
-    if (typeof renderReferral === "function") {
-      renderReferral();
-    }
+    document.addEventListener(
+      "DOMContentLoaded",
+      function () {
+
+        if (typeof renderReferral === "function") {
+          renderReferral();
+        }
+
+      }
+    );
   </script>
 
 </body>
 
-    </html>
+  </html>
