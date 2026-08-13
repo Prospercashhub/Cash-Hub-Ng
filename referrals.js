@@ -1,10 +1,6 @@
-/*
-  Cash Hub NG referrals
-  Uses the central API adapter from api.js.
-  Referral data is server-backed.
-*/
+// Cash Hub NG — Server-backed referrals
 
-function getSessionLocal() {
+function getReferralSession() {
   try {
     return JSON.parse(
       localStorage.getItem("cashHubNgSession") || "null"
@@ -14,83 +10,136 @@ function getSessionLocal() {
   }
 }
 
-async function renderReferral() {
-  const session = getSessionLocal();
+async function referralApi(path, options = {}) {
+  if (typeof api !== "function") {
+    throw new Error(
+      "API is not loaded. Make sure api.js is loaded before referrals.js."
+    );
+  }
 
-  if (!session) {
+  return await api(path, options);
+}
+
+
+// ================= REFERRAL CENTER =================
+
+async function renderReferral() {
+  const session = getReferralSession();
+
+  if (!session || !session.id) {
     window.location.href = "login.html";
     return;
   }
 
   try {
-    const wallet = await api(
+    // Get authoritative user data from server
+    const walletData = await referralApi(
       `/api/wallet?userId=${encodeURIComponent(session.id)}`
     );
 
-    if (!wallet || !wallet.user) {
+    if (!walletData || !walletData.user) {
       throw new Error("Unable to load referral information.");
     }
 
-    const user = wallet.user;
+    const user = walletData.user;
 
-    const code =
+    const referralCode =
       user.referral_code ||
       user.referralCode ||
       "";
 
-    const link =
-      location.origin +
-      "/signup.html?ref=" +
-      encodeURIComponent(code);
+    const activeReferrals = Number(
+      user.active_referrals ||
+      user.activeReferrals ||
+      0
+    );
 
-    const codeEl = document.getElementById("ref-code");
-    const linkEl = document.getElementById("ref-link");
-    const countEl = document.getElementById("ref-count");
-    const earningsEl = document.getElementById("ref-earnings");
+    const referralEarnings = Number(
+      user.referral_earnings ||
+      user.referralEarnings ||
+      0
+    );
+
+    const baseUrl =
+      window.location.origin ||
+      (
+        window.location.protocol +
+        "//" +
+        window.location.host
+      );
+
+    const referralLink =
+      baseUrl +
+      "/signup.html?ref=" +
+      encodeURIComponent(referralCode);
+
+
+    // Display referral information
+
+    const codeEl =
+      document.getElementById("ref-code");
+
+    const linkEl =
+      document.getElementById("ref-link");
+
+    const countEl =
+      document.getElementById("ref-count");
+
+    const earningsEl =
+      document.getElementById("ref-earnings");
+
+    const progressEl =
+      document.getElementById("ref-progress");
 
     if (codeEl) {
-      codeEl.textContent = code;
+      codeEl.textContent = referralCode;
     }
 
     if (linkEl) {
-      linkEl.value = link;
+      linkEl.value = referralLink;
     }
 
     if (countEl) {
-      countEl.textContent = String(
-        user.active_referrals ||
-        user.activeReferrals ||
-        0
-      );
+      countEl.textContent =
+        String(activeReferrals);
     }
 
     if (earningsEl) {
       earningsEl.textContent =
         "₦" +
-        Number(
-          user.referral_earnings ||
-          user.referralEarnings ||
-          0
-        ).toLocaleString("en-NG", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2
-        });
+        referralEarnings.toLocaleString(
+          "en-NG",
+          {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          }
+        );
     }
 
-    const listData = await api(
+    if (progressEl) {
+      progressEl.value =
+        Math.min(activeReferrals, 5);
+
+      progressEl.max = 5;
+    }
+
+
+    // Load referral list from server
+
+    const listData = await referralApi(
       `/api/referrals/${encodeURIComponent(session.id)}`
     );
 
     const listEl =
-      document.getElementById("ref-list") ||
-      document.getElementById("admin-users");
+      document.getElementById("ref-list");
 
     if (!listEl) return;
 
-    const rows =
+    const referrals =
       (listData && listData.referrals) || [];
 
-    if (!rows.length) {
+    if (!referrals.length) {
+
       listEl.innerHTML = `
         <div class="empty-state">
           <span>👥</span>
@@ -101,42 +150,56 @@ async function renderReferral() {
           </p>
         </div>
       `;
+
       return;
     }
 
-    listEl.innerHTML = rows
-      .map(r => {
-        const u = r.user;
 
-        const name = u
-          ? (u.full_name || u.name || u.email)
-          : ("User " + r.referred_user_id);
+    listEl.innerHTML =
+      referrals.map(function (referral) {
 
-        const date = r.created_at
-          ? new Date(r.created_at).toLocaleDateString()
-          : "";
+        const referredUser =
+          referral.user || {};
+
+        const name =
+          referredUser.full_name ||
+          referredUser.name ||
+          referredUser.email ||
+          "Member";
+
+        const email =
+          referredUser.email || "";
+
+        const date =
+          referral.created_at
+            ? new Date(
+                referral.created_at
+              ).toLocaleDateString("en-NG")
+            : "";
 
         return `
           <div class="admin-row">
             <div>
-              <strong>${name}</strong>
-              <small>${u ? u.email : ""}</small>
+              <strong>${escapeReferralHtml(name)}</strong>
+              <small>${escapeReferralHtml(email)}</small>
             </div>
-            <span>${date}</span>
+
+            <span>${escapeReferralHtml(date)}</span>
           </div>
         `;
-      })
-      .join("");
+
+      }).join("");
+
 
   } catch (error) {
+
     console.error(
-      "Referral loading error:",
+      "renderReferral error:",
       error
     );
 
     const listEl =
-      document.getElementById("ref-list") ||
-      document.getElementById("admin-users");
+      document.getElementById("ref-list");
 
     if (listEl) {
       listEl.innerHTML = `
@@ -144,7 +207,7 @@ async function renderReferral() {
           <span>⚠️</span>
           <h3>Unable to load referrals</h3>
           <p>
-            ${error.message || "Please try again later."}
+            Please check your connection and try again.
           </p>
         </div>
       `;
@@ -152,70 +215,129 @@ async function renderReferral() {
   }
 }
 
-function copyRef() {
+
+// Basic HTML escaping for referral names/emails
+function escapeReferralHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+
+// ================= COPY REFERRAL LINK =================
+
+async function copyRef() {
+
   const input =
     document.getElementById("ref-link");
 
   if (!input) return;
 
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(input.value);
-  } else {
-    input.select();
-    document.execCommand("copy");
-  }
+  try {
 
-  const status =
-    document.getElementById("ref-copy-status") ||
-    document.getElementById("copy-status");
+    if (
+      navigator.clipboard &&
+      window.isSecureContext
+    ) {
 
-  if (status) {
-    status.textContent =
-      "Referral link copied!";
+      await navigator.clipboard.writeText(
+        input.value
+      );
+
+    } else {
+
+      input.focus();
+      input.select();
+      document.execCommand("copy");
+    }
+
+    const status =
+      document.getElementById("ref-copy-status") ||
+      document.getElementById("copy-status");
+
+    if (status) {
+      status.textContent =
+        "Referral link copied!";
+    }
+
+  } catch (error) {
+
+    console.error(
+      "copyRef error:",
+      error
+    );
   }
 }
 
-function shareRef() {
+
+// ================= SHARE REFERRAL =================
+
+async function shareRef() {
+
   const input =
     document.getElementById("ref-link");
 
-  const url = input
-    ? input.value
-    : location.href;
+  const url =
+    input ? input.value : window.location.href;
 
-  if (navigator.share) {
-    navigator.share({
-      title: "Join Cash Hub NG",
-      text: "Join me on Cash Hub NG",
-      url
-    }).catch(() => {});
+  try {
+
+    if (navigator.share) {
+
+      await navigator.share({
+        title: "Join Cash Hub NG",
+        text: "Join me on Cash Hub NG",
+        url: url
+      });
+
+    } else {
+
+      await copyRef();
+
+    }
+
+  } catch (error) {
+
+    // User cancelling the share dialog is harmless.
+    console.log(
+      "Share cancelled or unavailable."
+    );
   }
 }
 
+
+// ================= SIGNUP REFERRAL =================
+
 function setupReferralSignup() {
+
   const code =
-    new URLSearchParams(location.search).get("ref");
+    new URLSearchParams(
+      window.location.search
+    ).get("ref");
 
   if (!code) return;
 
   const note =
-    document.getElementById("referral-note");
+    document.getElementById(
+      "referral-note"
+    );
 
   if (note) {
     note.textContent =
-      "You were invited! We'll apply the referral when you sign up.";
+      "You were invited! Your referral will be applied when you sign up.";
   }
 
-  /*
-    The referral code is temporarily stored only
-    for the signup flow. The actual referral relationship
-    is created by the server and stored in Supabase.
-  */
   sessionStorage.setItem(
     "cashHubReferralCode",
     String(code)
   );
 }
+
+
+// ================= GLOBAL EXPORTS =================
 
 window.renderReferral =
   renderReferral;
