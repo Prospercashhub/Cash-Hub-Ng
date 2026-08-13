@@ -1,21 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Login | Cash Hub NG</title>
+
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+
   <main class="auth">
+
     <div class="auth-card">
-      <a class="logo" href="index.html">Cash<span>Hub</span> NG</a>
+
+      <a class="logo" href="index.html">
+        Cash<span>Hub</span> NG
+      </a>
 
       <h1>Welcome back</h1>
-      <p>Log in to access your Cash Hub NG account.</p>
+
+      <p>
+        Log in to access your Cash Hub NG account.
+      </p>
 
       <form id="login-form">
-        <label>Email address</label>
+
+        <label for="email">
+          Email address
+        </label>
+
         <input
           id="email"
           type="email"
@@ -24,7 +40,10 @@
           placeholder="you@example.com"
         >
 
-        <label>Password</label>
+        <label for="password">
+          Password
+        </label>
+
         <input
           id="password"
           type="password"
@@ -33,19 +52,37 @@
           placeholder="Your password"
         >
 
-        <button class="primary-btn" type="submit">Login</button>
+        <button
+          class="primary-btn"
+          type="submit"
+        >
+          Login
+        </button>
+
         <div id="auth-message"></div>
+
       </form>
 
-      <p>Don't have an account? <a href="signup.html">Join Now</a></p>
+      <p>
+        Don't have an account?
+        <a href="signup.html">Join Now</a>
+      </p>
+
     </div>
+
   </main>
 
-  <!-- API adapter must load before auth.js -->
+
+  <!-- IMPORTANT: API MUST LOAD FIRST -->
   <script src="api.js"></script>
+
+  <!-- Authentication loads AFTER API -->
   <script src="auth.js"></script>
+
   <script>
     setupLogin();
   </script>
+
 </body>
-    </html>
+
+        </html>
