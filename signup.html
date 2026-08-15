@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Create Account | Cash Hub NG</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <main class="auth">
+
+    <div class="auth-card">
+
+      <a class="logo" href="index.html">
+        Cash<span>Hub</span> NG
+      </a>
+
+      <h1>Create your account</h1>
+
+      <p>
+        Join Cash Hub NG and start earning.
+      </p>
+
+      <div id="referral-note"></div>
+
+      <form id="signup-form">
+
+        <label for="full-name">
+          Full name
+        </label>
+
+        <input
+          id="full-name"
+          type="text"
+          required
+          autocomplete="name"
+          placeholder="Your full name"
+        >
+
+        <label for="email">
+          Email address
+        </label>
+
+        <input
+          id="email"
+          type="email"
+          required
+          autocomplete="email"
+          placeholder="you@example.com"
+        >
+
+        <label for="password">
+          Password
+        </label>
+
+        <input
+          id="password"
+          type="password"
+          required
+          minlength="6"
+          autocomplete="new-password"
+          placeholder="Create a password"
+        >
+
+        <label for="confirm-password">
+          Confirm password
+        </label>
+
+        <input
+          id="confirm-password"
+          type="password"
+          required
+          minlength="6"
+          autocomplete="new-password"
+          placeholder="Confirm your password"
+        >
+
+        <button
+          class="primary-btn"
+          type="submit"
+        >
+          Create Account
+        </button>
+
+        <div id="auth-message"></div>
+
+      </form>
+
+      <p>
+        Already have an account?
+        <a href="login.html">Login</a>
+      </p>
+
+    </div>
+
+  </main>
+
+
+  <!-- IMPORTANT: API MUST LOAD FIRST -->
+  <script src="api.js"></script>
+
+  <!-- Authentication loads AFTER API -->
+  <script src="auth.js"></script>
+
+  <!-- Referral handling -->
+  <script src="referrals.js"></script>
+
+  <script>
+    setupReferralSignup();
+    setupSignup();
+  </script>
+
+</body>
+
+  </html>
