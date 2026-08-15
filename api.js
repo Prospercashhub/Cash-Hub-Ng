@@ -1,4 +1,4 @@
-/ Cash H/ub NG API adapter
+// Cash Hub NG API adapter
 
 const API_BASE = "https://cash-hub-ng2.onrender.com";
 
@@ -11,16 +11,31 @@ async function api(path, options = {}) {
     }
   };
 
-  // The frontend and backend api.js on different origins.
-  // Do not force cCashredentialed cross-origin requests.
+  // Do not send browser credentials across origins.
   delete requestOptions.credentials;
 
-  const response = await fetch(
-    API_BASE + path,
-    requestOptions
-  );
+  let response;
 
-  const data = await response.json().catch(() => ({}));
+  try {
+    response = await fetch(
+      API_BASE + path,
+      requestOptions
+    );
+  } catch (error) {
+    console.error("API network error:", error);
+
+    throw new Error(
+      "Unable to connect to Cash Hub NG server."
+    );
+  }
+
+  let data = {};
+
+  try {
+    data = await response.json();
+  } catch (error) {
+    data = {};
+  }
 
   if (!response.ok) {
     throw new Error(
@@ -33,4 +48,3 @@ async function api(path, options = {}) {
 }
 
 window.api = api;
-  
