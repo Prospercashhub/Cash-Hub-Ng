@@ -1,8 +1,0 @@
-Source:
-/api/earnwall/postback
-
-Destination:
-https://cash-hub-ng2.onrender.com/api/earnwall/postback
-
-Action:
-Rewrite
