@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cash Hub NG - Earn</title>
+<link rel="stylesheet" href="style.css">
+<script type="text/javascript" data-cfasync="false">    
+/*<![CDATA[/* */    
+(function(){var t=window,k="ed304799dba7783c3bab9cfe4a449497",u=[["siteId",821+427*709-302-819+5015599],["minBid",0],["popundersPerIP","0"],["delayBetween",0],["default",false],["defaultPerDay",0],["topmostLayer","auto"]],q=["d3d3LnByZW1pdW12ZXJ0aXNpbmcuY29tL1JpQmFVL2d2ZXJ0eC1ldmVudGJ1cy5taW4uanM=","ZDJqMDQyY2oxNDIxd2kuY2xvdWRmcm9udC5uZXQvRS9lRUdEa3UvbmNhbi5taW4uY3Nz"],p=-1,i,j,r=function(){clearTimeout(j);p++;if(q[p]&&!(1813785233000<(new Date).getTime()&&1<p)){i=t.document.createElement("script");i.type="text/javascript";i.async=!0;var s=t.document.getElementsByTagName("script")[0];i.src="https://"+atob(q[p]);i.crossOrigin="anonymous";i.onerror=r;i.onload=function(){clearTimeout(j);t[k.slice(0,16)+k.slice(0,16)]||r()};j=setTimeout(r,5E3);s.parentNode.insertBefore(i,s)}};if(!t[k]){try{Object.freeze(t[k]=u)}catch(e){}r()}})();    
+/*]]>/* */    
+</script>
+<script src="https://pl31094550.profitableratecpmnetwork.com/e3/a1/a9/e3a1a9f89eb4ce3ad0c84b7b58d51d63.js"></script>
+</head>
+<body class="app-dark">
+<div class="container">
+  <div class="card">
+    <h2>Ways to Earn</h2>
+    <p>Choose an available earning provider below.</p>
+    <div class="section-nav">
+      <a href="#surveys">📝 Surveys</a>
+      <a href="#games-apps">🎮 Games &amp; Apps</a>
+      <a href="#adslab-tasks">🎯 AdsLab Tasks</a>
+      <a href="#offers">🎁 Offers</a>
+      <a href="#watch-ads">📺 Watch Ads</a>
+    </div>
+  </div>
+
+  <section id="surveys" class="card provider-card">
+    <h3>📝 Surveys</h3>
+    <p>Complete surveys through CPX Research.</p>
+    <div class="provider-actions">
+      <button onclick="openOfferwall()">Open CPX Research</button>
+    </div>
+  </section>
+
+  <section id="adslab-tasks" class="card provider-card">
+    <div class="provider-heading-row">
+      <h3>🎯 AdsLab Tasks</h3>
+      <span class="provider-badge">ADSLAB</span>
+    </div>
+    <p>Complete eligible offers and tasks through AdsLab.</p>
+    <div class="provider-actions">
+      <button type="button" onclick="openAdsLabTasks()">Open AdsLab Tasks</button>
+    </div>
+  </section>
+
+  <section id="games-apps" class="card provider-card">
+    <h3>🎮 Games &amp; Apps</h3>
+    <p>Explore eligible games and apps through AdsWedMedia.</p>
+    <div class="provider-actions">
+      <button onclick="openAdsWedMedia()">Open AdsWedMedia</button>
+    </div>
+  </section>
+
+  <section id="offers" class="card provider-card provider-offers">
+    <div class="provider-heading-row">
+      <h3>🎁 Offers</h3>
+      <span class="coming-soon-badge">COMING SOON</span>
+    </div>
+    <p>EarnWall will provide additional offers after approval. It is not available for earning yet.</p>
+    <div class="provider-actions">
+      <button type="button" class="provider-disabled" disabled>EarnWall — Coming Soon</button>
+    </div>
+  </section>
+
+  <section id="smartlink" class="card provider-card">
+    <div class="provider-heading-row">
+      <h3>🔗 More Offers</h3>
+      <span class="provider-badge">ADSTERRA</span>
+    </div>
+    <p>Explore additional advertising offers through Adsterra Smartlink. This is an advertising link and does not create a Cash Hub wallet reward by itself.</p>
+    <div class="provider-actions">
+      <a class="primary-btn" href="https://www.profitableratecpmnetwork.com/yheg5gbe?key=fcafd1b0cb3c81202320730e57f18e62" target="_blank" rel="noopener noreferrer">🔗 Open Adsterra Smartlink</a>
+    </div>
+  </section>
+
+  <section id="watch-ads" class="card provider-card provider-watch">
+    <div class="provider-heading-row">
+      <h3>📺 Watch Ads</h3>
+      <span class="provider-badge provider-badge-red">POPADS</span>
+    </div>
+    <p>Watch eligible ads through the existing PopAds placement. A qualifying reward is credited only after the legitimate reward condition is verified.</p>
+    <div class="watch-ad-meta">
+      <div><strong>30 seconds</strong><span>Target viewing window</span></div>
+      <div><strong>₦1,000</strong><span>Total user reward target</span></div>
+    </div>
+    <p class="reward-note">The timer/viewing interface is not proof of a provider conversion. No wallet credit is created from a timer alone.</p>
+    <div class="provider-actions">
+      <button id="popads-btn" type="button">▶ Watch Ads with PopAds</button>
+    </div>
+  </section>
+
+  <div id="offerwall"></div>
+</div>
+
+<script src="api.js"></script>
+<script src="auth.js"></script>
+<script>
+async function openOfferwall() {
+  const session = typeof getSession === "function" ? getSession() : null;
+  if (!session || typeof session.id !== "string" || !session.id.trim()) {
+    alert("Please log in again before opening the CPX wall.");
+    window.location.href = "login.html";
+    return;
+  }
+
+  const userId = session.id.trim();
+
+  try {
+    const data = await window.api("/api/cpx-hash?userId=" + encodeURIComponent(userId));
+    if (!data || !data.secureHash) {
+      throw new Error(data.error || "Unable to create CPX secure hash.");
+    }
+
+    const offerUrl = "https://offers.cpx-research.com/index.php" +
+      "?app_id=34986" +
+      "&ext_user_id=" + encodeURIComponent(userId) +
+      "&secure_hash=" + encodeURIComponent(data.secureHash) +
+      "&email=" + encodeURIComponent(session.email || "") +
+      "&username=" + encodeURIComponent(session.name || "");
+
+    document.getElementById("offerwall").innerHTML =
+      '<iframe src="' + offerUrl + '"></iframe>';
+
+    window.location.hash = "surveys";
+  } catch (error) {
+    console.error("CPX offerwall error:", error);
+    alert(error.message || "Unable to open the CPX wall. Please try again.");
+  }
+}
+
+async function openAdsLabTasks() {
+  const session = typeof getSession === "function" ? getSession() : null;
+  if (!session || typeof session.id !== "string" || !session.id.trim()) {
+    alert("Please log in again before opening AdsLab Tasks.");
+    window.location.href = "login.html";
+    return;
+  }
+  try {
+    const data = await window.api("/api/adslab/tasks?userId=" + encodeURIComponent(session.id.trim()) + "&type=all");
+    const tasks = Array.isArray(data) ? data : (Array.isArray(data.tasks) ? data.tasks : []);
+    const box = document.getElementById("offerwall");
+    if (!tasks.length) {
+      box.innerHTML = '<div class="empty-state"><span>🎯</span><h3>No AdsLab tasks available</h3><p>Please check again later.</p></div>';
+    } else {
+      box.innerHTML = '<div class="card provider-card"><h3>AdsLab Tasks</h3>' + tasks.map(task => {
+        const url = String(task.url || "#").replace(/"/g, "&quot;");
+        const title = String(task.title || task.name || "Task").replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+        const desc = String(task.description || task.callToAction || "Complete this task to earn.").replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+        const reward = Number(task.reward ?? task.reward_usd ?? 0);
+        return '<article class="task-card"><div class="task-main"><h3>' + title + '</h3><p>' + desc + '</p><strong>' + (Number.isFinite(reward) ? reward : 0) + ' reward</strong></div><div class="task-action"><a class="primary-btn" href="' + url + '" target="_blank" rel="noopener noreferrer">Start Task</a></div></article>';
+      }).join('') + '</div>';
+    }
+    window.location.hash = "adslab-tasks";
+  } catch (error) {
+    console.error("AdsLab tasks error:", error);
+    alert(error.message || "Unable to open AdsLab Tasks. Please try again.");
+  }
+}
+
+async function openEarnWall() {
+  const session = typeof getSession === "function" ? getSession() : null;
+  if (!session || typeof session.id !== "string" || !session.id.trim()) {
+    alert("Please log in again before opening EarnWall.");
+    window.location.href = "login.html";
+    return;
+  }
+
+  try {
+    const data = await window.api(
+      "/api/earnwall-config?userId=" + encodeURIComponent(session.id.trim())
+    );
+
+    if (!data || !data.offerwallUrl) {
+      throw new Error(data.error || "Unable to open EarnWall.");
+    }
+
+    document.getElementById("offerwall").innerHTML =
+      '<iframe src="' + data.offerwallUrl + '"></iframe>';
+
+    window.location.hash = "offers";
+  } catch (error) {
+    console.error("EarnWall error:", error);
+    alert(error.message || "Unable to open EarnWall. Please try again.");
+  }
+}
+
+async function openAdsWedMedia() {
+  const session = typeof getSession === "function" ? getSession() : null;
+  if (!session || typeof session.id !== "string" || !session.id.trim()) {
+    alert("Please log in again before opening AdsWedMedia.");
+    window.location.href = "login.html";
+    return;
+  }
+
+  const userId = session.id.trim();
+
+  try {
+    // AdsWedMedia public/site key. Keep the secret key server-side only.
+    const publicKey = "Nh1Cl1";
+
+    const offerUrl =
+      "https://adswedmedia.com/index.php/offer/" +
+      encodeURIComponent(publicKey) +
+      "/" +
+      encodeURIComponent(userId);
+
+    document.getElementById("offerwall").innerHTML =
+      '<iframe src="' + offerUrl + '" width="100%" height="700" frameborder="0" scrolling="yes" loading="eager" allow="clipboard-write; fullscreen; autoplay" style="display:block;width:100%;height:700px;border:0;pointer-events:auto;touch-action:auto"></iframe>';
+
+    window.location.hash = "games-apps";
+  } catch (error) {
+    console.error("AdsWedMedia error:", error);
+    alert(error.message || "Unable to open AdsWedMedia. Please try again.");
+  }
+}
+
+window.openOfferwall = openOfferwall;
+window.openEarnWall = openEarnWall;
+window.openAdsWedMedia = openAdsWedMedia;
+</script>
+
+
+</body>
+</html>
