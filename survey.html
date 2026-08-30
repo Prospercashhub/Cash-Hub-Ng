@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cash Hub NG - Surveys</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#111827;
+    color:#fff;
+}
+
+header{
+    background:#16a34a;
+    padding:15px;
+    text-align:center;
+    font-size:22px;
+    font-weight:bold;
+}
+
+.container{
+    padding:15px;
+}
+
+iframe{
+    width:100%;
+    height:2000px;
+    border:none;
+    border-radius:10px;
+    background:#fff;
+}
+</style>
+<script src="api.js"></script>
+<script src="auth.js"></script>
+<script src="https://pl31094550.profitableratecpmnetwork.com/e3/a1/a9/e3a1a9f89eb4ce3ad0c84b7b58d51d63.js"></script>
+</head>
+
+<body>
+
+<header>
+Cash Hub NG Surveys
+</header>
+
+<div class="container">
+
+<div id="survey-status">Loading your CPX survey wall...</div>
+<div id="survey-wall"></div>
+
+</div>
+
+
+<script>
+async function openSurveyWall() {
+  const status = document.getElementById("survey-status");
+  const wall = document.getElementById("survey-wall");
+  const session = typeof getSession === "function" ? getSession() : null;
+
+  if (!session || typeof session.id !== "string" || !session.id.trim()) {
+    status.textContent = "Please log in again before opening the CPX wall.";
+    return;
+  }
+
+  const userId = session.id.trim();
+
+  try {
+    const response = await fetch(
+      "https://cash-hub-ng2.onrender.com/api/cpx-hash?userId=" +
+      encodeURIComponent(userId)
+    );
+    const data = await response.json();
+
+    if (!response.ok || !data.secureHash) {
+      throw new Error(data.error || "Unable to create CPX secure hash.");
+    }
+
+    const offerUrl =
+      "https://offers.cpx-research.com/index.php" +
+      "?app_id=34986" +
+      "&ext_user_id=" + encodeURIComponent(userId) +
+      "&secure_hash=" + encodeURIComponent(data.secureHash) +
+      "&username=" + encodeURIComponent(session.name || "") +
+      "&email=" + encodeURIComponent(session.email || "") +
+      "&subid_1=&subid_2";
+
+    const iframe = document.createElement("iframe");
+    iframe.src = offerUrl;
+    iframe.title = "CPX Research Survey Wall";
+    wall.replaceChildren(iframe);
+    status.textContent = "";
+  } catch (error) {
+    console.error("CPX survey wall error:", error);
+    status.textContent = error.message || "Unable to open the CPX wall. Please try again.";
+  }
+}
+
+document.addEventListener("DOMContentLoaded", openSurveyWall);
+</script>
+
+</body>
+  </html>
