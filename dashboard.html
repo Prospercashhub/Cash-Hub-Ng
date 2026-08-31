@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard | Cash Hub NG</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://pl31094550.profitableratecpmnetwork.com/e3/a1/a9/e3a1a9f89eb4ce3ad0c84b7b58d51d63.js"></script>
+</head>
+<body class="dashboard-page" class=\"app-dark\">
+<header class="dash-header">
+  <a class="logo" href="index.html">Cash<span>Hub</span> NG</a>
+  <div class="dash-user"><span class="avatar">CH</span><span>Welcome back, <strong id="user-name">Member</strong> 👋</span></div>
+  <button class="logout-btn" onclick="logout()">Logout</button>
+</header>
+
+<main class="dashboard">
+  <section class="dash-welcome">
+    <div><p class="eyebrow">YOUR DASHBOARD</p><h1>Let's get you earning.</h1><p>Choose an activity below and start exploring available opportunities.</p></div>
+    <a class="primary-btn" href="#earn">Earn Now →</a>
+  </section>
+
+  <section class="balance-grid">
+    <div class="balance-box main-balance"><span>Available Balance</span><strong id="user-balance">₦0.00</strong><small>Ready for eligible withdrawals</small><a href="wallet.html">View Wallet →</a></div>
+    <div class="balance-box"><span>Total Earnings</span><strong id="user-earnings">₦0.00</strong><small>All-time eligible rewards</small></div>
+    <div class="balance-box"><span>Referral Earnings</span><strong id="user-referral-earnings">₦0.00</strong><small>From your referral activity</small></div>
+  </section>
+
+  <section class="quick-actions">
+    <a href="earn.html"><b>🎯</b><span><strong>Earn Now</strong><small>Find activities</small></span></a>
+    <a href="wallet.html"><b>💳</b><span><strong>Withdraw</strong><small>Manage your wallet</small></span></a>
+    <a href="referrals.html"><b>👥</b><span><strong>Refer & Earn</strong><small>Invite friends</small></span></a>
+  </section>
+
+  <section id="earn" class="dash-section">
+    <div class="section-title"><div><p class="eyebrow">OPPORTUNITIES</p><h2>Ways to earn</h2></div><a href="earn.html">View all →</a></div>
+    <div class="earn-grid">
+      <a class="earn-card" href="earn.html#surveys"><span class="big-icon">📝</span><div><h3>Surveys</h3><p>CPX Research</p></div><span class="arrow">→</span></a>
+      <a class="earn-card" href="earn.html#games-apps"><span class="big-icon">🎮</span><div><h3>Games &amp; Apps</h3><p>AdsWedMedia</p></div><span class="arrow">→</span></a>
+      <div class="earn-card is-disabled" aria-disabled="true"><span class="big-icon">🎁</span><div><h3>Offers</h3><p>EarnWall <strong class="coming-soon-inline">COMING SOON</strong></p></div><span class="arrow">•</span></div>
+    </div>
+  </section>
+
+  <section class="lower-grid">
+    <div class="panel">
+      <div class="section-title"><h2>Recent transactions</h2><a href="wallet.html">View all →</a></div>
+      <div id="recent-transactions" class="transactions-placeholder"><div class="empty-state"><span>📋</span><h3>Loading…</h3><p>Fetching recent activity.</p></div></div>
+    </div>
+
+    <div id="referrals" class="panel referral-panel">
+      <p class="eyebrow">REFERRAL PROGRAM</p>
+      <h2>Earn with your friends.</h2>
+      <p>Invite friends using your referral link and participate in the referral program when eligible.</p>
+      <a class="primary-btn" href="referrals.html">Open Referral Center →</a>
+      <div id="copy-status"></div>
+      <div style="margin-top:12px"><strong>Active referrals: <span id="dashboard-ref-count">0</span></strong></div>
+    </div>
+  </section>
+</main>
+
+<nav class="bottom-nav">
+  <a class="active" href="dashboard.html">⌂<span>Home</span></a>
+  <a href="earn.html">🎯<span>Earn</span></a>
+  <a href="wallet.html">💳<span>Wallet</span></a>
+  <a href="profile.html">👤<span>Profile</span></a>
+</nav>
+
+<script>
+function copyReferral(){
+  const link='https://cashhubng.example/ref/CH0001';
+  if(navigator.clipboard){navigator.clipboard.writeText(link);}
+  const el = document.getElementById('copy-status');
+  if(el) el.textContent='Referral link copied!';
+}
+</script>
+
+<script src="api.js"></script>
+<script src="auth.js"></script>
+<script>protectDashboard();</script>
+<script src="dashboard.js"></script>
+
+</body>
+  </html>
