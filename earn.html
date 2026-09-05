@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cash Hub NG - Earn</title>
+<link rel="stylesheet" href="style.css">
+<script type="text/javascript" data-cfasync="false">    
+/*<![CDATA[/* */    
+(function(){var t=window,k="ed304799dba7783c3bab9cfe4a449497",u=[["siteId",821+427*709-302-819+5015599],["minBid",0],["popundersPerIP","0"],["delayBetween",0],["default",false],["defaultPerDay",0],["topmostLayer","auto"]],q=["d3d3LnByZW1pdW12ZXJ0aXNpbmcuY29tL1JpQmFVL2d2ZXJ0eC1ldmVudGJ1cy5taW4uanM=","ZDJqMDQyY2oxNDIxd2kuY2xvdWRmcm9udC5uZXQvRS9lRUdEa3UvbmNhbi5taW4uY3Nz"],p=-1,i,j,r=function(){clearTimeout(j);p++;if(q[p]&&!(1813785233000<(new Date).getTime()&&1<p)){i=t.document.createElement("script");i.type="text/javascript";i.async=!0;var s=t.document.getElementsByTagName("script")[0];i.src="https://"+atob(q[p]);i.crossOrigin="anonymous";i.onerror=r;i.onload=function(){clearTimeout(j);t[k.slice(0,16)+k.slice(0,16)]||r()};j=setTimeout(r,5E3);s.parentNode.insertBefore(i,s)}};if(!t[k]){try{Object.freeze(t[k]=u)}catch(e){}r()}})();    
+/*]]>/* */    
+</script>
+<script src="https://pl31094550.profitableratecpmnetwork.com/e3/a1/a9/e3a1a9f89eb4ce3ad0c84b7b58d51d63.js"></script>
+</head>
+<body class="app-dark">
+<div class="container">
+  <div class="card">
+    <h2>Ways to Earn</h2>
+    <p>Choose an available earning provider below.</p>
+    <div class="section-nav">
+      <a href="#surveys">📝 Surveys</a>
+      <a href="#games-apps">🎮 Games &amp; Apps</a>
+      <a href="#hot-paying">🥵 Hot Paying</a>
+    </div>
+  </div>
+
+  <section id="surveys" class="card provider-card">
+    <h3>📝 Surveys</h3>
+    <p>Complete surveys through CPX Research.</p>
+    <div class="provider-actions">
+      <button onclick="openOfferwall()">Open CPX Research</button>
+    </div>
+  </section>
+
+  <section id="hot-paying" class="card provider-card">
+    <div class="provider-heading-row">
+      <h3>🥵 Hot Paying Ones</h3>
+      <span class="provider-badge">REWARDS</span>
+    </div>
+    <p>Complete eligible AdsLab tasks and AdsWedMedia activities to earn rewards in your Cash Hub wallet.</p>
+  </section>
+
+
+
+  <section id="adslab-tasks" class="card provider-card">
+    <div class="provider-heading-row">
+      <h3>🎯 AdsLab Tasks</h3>
+      <span class="provider-badge">ADSLAB</span>
+    </div>
+    <p>Complete eligible offers and tasks through AdsLab and receive confirmed rewards.</p>
+    <div class="provider-actions">
+      <button type="button" onclick="openAdsLabTasks()">Open AdsLab Tasks</button>
+    </div>
+  </section>
+
+  <section id="games-apps" class="card provider-card">
+    <div class="provider-heading-row">
+      <h3>🎮 AdsWedMedia</h3>
+      <span class="provider-badge">ADSWEDMEDIA</span>
+    </div>
+    <p>Complete eligible games and app activities. Confirmed conversions are credited to your Cash Hub wallet.</p>
+    <div class="provider-actions">
+      <button type="button" onclick="openAdsWedMedia()">Open AdsWedMedia</button>
+    </div>
+  </section>
+
+
+
+  <div id="offerwall"></div>
+</div>
+
+<script src="api.js"></script>
+<script src="auth.js"></script>
+<script>
+function focusProviderView() {
+  const target = document.getElementById("offerwall");
+  if (!target) return;
+  window.setTimeout(() => {
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 80);
+}
+
+async function openOfferwall() {
+  const session = typeof getSession === "function" ? getSession() : null;
+  if (!session || typeof session.id !== "string" || !session.id.trim()) {
+    alert("Please log in again before opening the CPX wall.");
+    window.location.href = "login.html";
+    return;
+  }
+
+  const userId = session.id.trim();
+
+  try {
+    const data = await window.api("/api/cpx-hash?userId=" + encodeURIComponent(userId));
+    if (!data || !data.secureHash) {
+      throw new Error(data.error || "Unable to create CPX secure hash.");
+    }
+
+    const offerUrl = "https://offers.cpx-research.com/index.php" +
+      "?app_id=34986" +
+      "&ext_user_id=" + encodeURIComponent(userId) +
+      "&secure_hash=" + encodeURIComponent(data.secureHash) +
+      "&email=" + encodeURIComponent(session.email || "") +
+      "&username=" + encodeURIComponent(session.name || "");
+
+    document.getElementById("offerwall").innerHTML =
+      '<iframe src="' + offerUrl + '"></iframe>';
+
+    window.location.hash = "surveys";
+    focusProviderView();
+  } catch (error) {
+    console.error("CPX offerwall error:", error);
+    alert(error.message || "Unable to open the CPX wall. Please try again.");
+  }
+}
+
+function isAdsLabWatchAdTask(task) {
+  const text = [
+    task && task.type,
+    task && task.category,
+    task && task.title,
+    task && task.name,
+    task && task.description,
+    task && task.callToAction
+  ].filter(Boolean).join(" ").toLowerCase();
+  const type = String((task && task.type) || "").trim().toLowerCase();
+  const category = String((task && task.category) || "").trim().toLowerCase();
+  if (type === "ptc" || category === "ptc" || category === "ptc ads" || category === "advertisement") return true;
+  return /\bwatch\s*(?:a\s*)?ads?\b|\bwatch\s*rewarded\b|\brewarded\s*ads?\b|\bwatchad\b|\brewarded\s*video\b/.test(text);
+}
+
+async function openAdsLabTasks() {
+  const session = typeof getSession === "function" ? getSession() : null;
+  if (!session || typeof session.id !== "string" || !session.id.trim()) {
+    alert("Please log in again before opening AdsLab Tasks.");
+    window.location.href = "login.html";
+    return;
+  }
+  try {
+    const data = await window.api("/api/adslab/tasks?userId=" + encodeURIComponent(session.id.trim()) + "&type=all");
+    const rawTasks = Array.isArray(data) ? data : (Array.isArray(data.tasks) ? data.tasks : []);
+    // AdsLab may return dynamically supplied ad/watch-ad items in the unified task feed.
+    // Hide only clearly identifiable watch/rewarded-ad entries; keep other task types.
+    const tasks = rawTasks.filter(task => !isAdsLabWatchAdTask(task));
+    const box = document.getElementById("offerwall");
+    if (!tasks.length) {
+      box.innerHTML = '<div class="empty-state"><span>🎯</span><h3>No AdsLab tasks available</h3><p>Please check again later.</p></div>';
+    } else {
+      box.innerHTML = '<div class="card provider-card"><h3>AdsLab Tasks</h3>' + tasks.map(task => {
+        const url = String(task.url || "#").replace(/"/g, "&quot;");
+        const title = String(task.title || task.name || "Task").replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+        const desc = String(task.description || task.callToAction || "Complete this task to earn.").replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+        const reward = Number(task.reward ?? task.reward_usd ?? 0);
+        const rewardText = Number.isFinite(reward) ? reward.toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "0.00";
+        return '<article class="task-card"><div class="task-main"><h3>' + title + '</h3><p>' + desc + '</p><strong>₦' + rewardText + ' provider reward</strong></div><div class="task-action"><a class="primary-btn" href="' + url + '" target="_blank" rel="noopener noreferrer">Start Task</a></div></article>';
+      }).join('') + '</div>';
+    }
+    window.location.hash = "adslab-tasks";
+    focusProviderView();
+  } catch (error) {
+    console.error("AdsLab tasks error:", error);
+    alert(error.message || "Unable to open AdsLab Tasks. Please try again.");
+  }
+}
+
+async function openAdsWedMedia() {
+  const session = typeof getSession === "function" ? getSession() : null;
+  if (!session || typeof session.id !== "string" || !session.id.trim()) {
+    alert("Please log in again before opening AdsWedMedia.");
+    window.location.href = "login.html";
+    return;
+  }
+
+  const userId = session.id.trim();
+
+  try {
+    // AdsWedMedia public/site key. Keep the secret key server-side only.
+    const publicKey = "Nh1Cl1";
+
+    const offerUrl =
+      "https://adswedmedia.com/index.php/offer/" +
+      encodeURIComponent(publicKey) +
+      "/" +
+      encodeURIComponent(userId);
+
+    document.getElementById("offerwall").innerHTML =
+      '<iframe src="' + offerUrl + '" width="100%" height="700" frameborder="0" scrolling="yes" loading="eager" allow="clipboard-write; fullscreen; autoplay" style="display:block;width:100%;height:700px;border:0;pointer-events:auto;touch-action:auto"></iframe>';
+
+    window.location.hash = "games-apps";
+    focusProviderView();
+  } catch (error) {
+    console.error("AdsWedMedia error:", error);
+    alert(error.message || "Unable to open AdsWedMedia. Please try again.");
+  }
+}
+
+window.openOfferwall = openOfferwall;
+window.openAdsWedMedia = openAdsWedMedia;
+</script>
+
+
+
+<script>
+(function showCashHubEarningNotice() {
+  function show() {
+    if (document.getElementById("cashHubEarningNotice")) return;
+    const overlay = document.createElement("div");
+    overlay.id = "cashHubEarningNotice";
+    overlay.style.cssText = "position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.84);padding:18px;";
+    overlay.innerHTML =
+      '<div style="max-width:460px;width:100%;max-height:90vh;overflow:auto;padding:24px;border-radius:20px;background:#111a2b;border:2px solid #ffd21c;box-shadow:0 20px 60px rgba(0,0,0,.5);color:#e4e8f3">' +
+        '<div style="font-size:34px;text-align:center">📢</div>' +
+        '<h2 style="margin:8px 0 12px;text-align:center;color:#fff6cf">Important Earning Update</h2>' +
+        '<p><strong style="color:#fff200">Bonus Top-Up Paused</strong></p>' +
+        '<p>The additional Cash Hub bonus/top-up previously applied to certain provider rewards has been <strong>paused until further notice</strong>.</p>' +
+        '<p>You can still earn from the available activities.</p>' +
+        '<p><strong style="color:#fff200">💰 Don\'t rely only on watching ads.</strong> Explore Tasks, Games, Surveys and other available activities. AdsLab and AdsWedMedia may have different activities available, and some may offer better earning opportunities.</p>' +
+        '<p style="font-size:.9rem;color:#c1c8d8">Rewards depend on the actual activity and provider confirmation.</p>' +
+        '<button id="cashHubEarningNoticeClose" type="button" style="width:100%;margin-top:10px;padding:13px 16px;border:0;border-radius:12px;background:#ffd21c;color:#111827;font-weight:900;cursor:pointer">Got it — Start Earning</button>' +
+      '</div>';
+    document.body.appendChild(overlay);
+    document.getElementById("cashHubEarningNoticeClose").onclick = function () { overlay.remove(); };
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", show, { once: true });
+  } else {
+    show();
+  }
+})();
+</script>
+
+<script>
+(function () {
+  const session = JSON.parse(localStorage.getItem('cashHubNgSession') || 'null');
+  const userId = session && session.id ? String(session.id) : '';
+
+  function lockEarningControls() {
+    document.querySelectorAll('button, a, [role="button"]').forEach(function (el) {
+      if (el.closest('#cashHubDailyLimitPopup')) return;
+      if (el.closest('#surveys')) return;
+      const text = ((el.textContent || '') + ' ' + (el.getAttribute('href') || '')).toLowerCase();
+      if (/cpx\s*research|cpx-research|offers\.cpx-research\.com/.test(text)) return;
+      if (/earn|ad|task|offer|game|reward|claim|watch/.test(text)) {
+        el.dataset.cashHubDailyLocked = '1';
+        el.style.pointerEvents = 'none';
+        el.style.opacity = '.45';
+        el.setAttribute('aria-disabled', 'true');
+      }
+    });
+  }
+
+  function showLimitPopup(unlockAt) {
+    if (document.getElementById('cashHubDailyLimitPopup')) return;
+    const overlay = document.createElement('div');
+    overlay.id = 'cashHubDailyLimitPopup';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.75);padding:20px';
+    overlay.innerHTML =
+      '<div style="max-width:430px;width:100%;padding:26px;border-radius:18px;background:#151a20;border:2px solid #ffd43b;text-align:center">' +
+      '<div style="font-size:38px">🔒</div>' +
+      '<h2>Daily Earning Limit Reached</h2>' +
+      '<p>You have reached the maximum <b>₦3,000</b> earning limit.</p>' +
+      '<p>You cannot earn more until your 24-hour session resets.</p>' +
+      '<p id="cashHubUnlockTime" style="font-weight:bold"></p>' +
+      '<button id="cashHubDailyLimitClose" type="button">Close</button>' +
+      '</div>';
+    document.body.appendChild(overlay);
+
+    function update() {
+      const left = Math.max(0, new Date(unlockAt).getTime() - Date.now());
+      if (!left) {
+        overlay.remove();
+        window.location.reload();
+        return;
+      }
+      const h = Math.floor(left / 3600000);
+      const m = Math.floor((left % 3600000) / 60000);
+      const s = Math.floor((left % 60000) / 1000);
+      const el = document.getElementById('cashHubUnlockTime');
+      if (el) {
+        el.innerHTML = 'Unlocks in: ' + h + 'h ' + m + 'm ' + s + 's<br><small>At: ' + new Date(unlockAt).toLocaleString() + '</small>';
+      }
+    }
+    document.getElementById('cashHubDailyLimitClose').onclick = function () { overlay.remove(); };
+    update();
+    setInterval(update, 1000);
+  }
+
+  async function checkDailyLimit() {
+    if (!userId) return;
+    try {
+      const data = await window.api('/api/earning-limit/' + encodeURIComponent(userId));
+      if (data.locked) {
+        lockEarningControls();
+        showLimitPopup(data.unlockAt);
+      }
+    } catch (e) {
+      console.warn('Daily earning limit check failed', e);
+    }
+  }
+
+  window.cashHubCheckDailyLimit = checkDailyLimit;
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', checkDailyLimit);
+  else checkDailyLimit();
+  setInterval(checkDailyLimit, 10000);
+})();
+</script>
+
+</body>
+</html>
+
+
